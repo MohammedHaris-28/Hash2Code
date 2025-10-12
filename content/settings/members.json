@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Mohammed Haris",
+    "role": "Software Developer",
+    "specialty": "Full-Stack Development",
+    "image": "/images/uploads/haris.jpg",
+    "instagram": "https://instagram.com/haris_username",
+    "linkedin": "https://linkedin.com/in/haris-profile",
+    "email": "haris@codersclub.dev",
+    "order": 0
+  },
+  {
+    "name": "Hafeez Ahammed",
+    "role": "Software Developer",
+    "specialty": "Full-Stack Development",
+    "image": "/images/uploads/hafeez.jpg",
+    "instagram": "https://www.instagram.com/hafeez_7724?igsh=dGdlc3gzZTh6NHA0",
+    "linkedin": "https://linkedin.com/in/hafeez-profile",
+    "email": "hafeez@codersclub.dev",
+    "order": 1
+  },
+  {
+    "name": "Mohammed Sanaulla",
+    "role": "Backend Developer",
+    "specialty": "UI/UX Design & APIs",
+    "image": "/images/uploads/sanaulla.jpg",
+    "instagram": "https://instagram.com/sanaulla_username",
+    "linkedin": "https://linkedin.com/in/sanaulla-profile",
+    "email": "sanaulla@codersclub.dev",
+    "order": 2
+  }
+]

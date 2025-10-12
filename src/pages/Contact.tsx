@@ -1,34 +1,6 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 const Contact = () => {
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
-    setFormData({ name: "", email: "", subject: "", message: "" });
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const contactInfo = [
     {
       icon: Mail,
@@ -39,14 +11,14 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Phone",
-      content: "+1 (555) 123-4567",
-      link: "tel:+15551234567",
+      content: "+91 7411723428",
+      link: "tel:+917411723428",
     },
     {
       icon: MapPin,
       title: "Location",
-      content: "San Francisco, CA",
-      link: "#",
+      content: "Bhadravathi, Shivamogga, Karnataka, India",
+      link: "https://maps.google.com/?q=Bhadravathi,Shivamogga,Karnataka,India",
     },
   ];
 
@@ -86,7 +58,12 @@ const Contact = () => {
                   <a
                     key={index}
                     href={info.link}
-                    className="glass p-6 rounded-xl flex flex-col items-center text-center space-y-4 hover:glow transition-all block"
+                    className="glass p-6 rounded-xl flex flex-col items-center text-center space-y-4 hover:glow transition-all block cursor-pointer"
+                    onClick={(e) => {
+                      if (info.title === "Phone") {
+                        window.location.href = info.link;
+                      }
+                    }}
                   >
                     <div className="w-16 h-16 rounded-lg gradient-primary flex items-center justify-center flex-shrink-0">
                       <info.icon className="w-8 h-8" />

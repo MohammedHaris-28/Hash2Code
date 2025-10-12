@@ -8,7 +8,7 @@ public_folder: "/images/uploads"
 collections:
   - name: "members"
     label: "Team Members"
-    folder: "content/members"
+    folder: "content/settings/members.json"
     create: true
     slug: "{{slug}}"
     fields:

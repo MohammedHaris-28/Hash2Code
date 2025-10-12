@@ -1,44 +1,54 @@
 import { Linkedin, Instagram, Mail } from "lucide-react";
 
+// Define the member type
+interface Member {
+  name: string;
+  role: string;
+  specialty: string;
+  image: string;
+  instagram?: string;
+  linkedin?: string;
+  email?: string;
+  order: number;
+}
+
 const Members = () => {
-  const members = [
+  // This would typically come from your CMS/data fetching
+  // For now, using static data that matches the CMS structure
+  const members: Member[] = [
     {
-      name: "Alex Chen",
-      role: "Lead Developer",
+      name: "Mohammed Haris",
+      role: "Software Developer",
       specialty: "Full-Stack Development",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      image: "/images/uploads/haris.jpg",
+      instagram: "https://www.instagram.com/mohammed_haris_28?igsh=MWhtdWpicGQxeDhvNA%3D%3D",
+      email: "mohammedharis",
+      order: 0
     },
     {
-      name: "Sarah Martinez",
-      role: "UI/UX Designer",
-      specialty: "Product Design",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+      name: "Hafeez Ahammed",
+      role: "Software Developer",
+      specialty: "Full-Stack Development",
+      image: "src/assets/hafeez.png",
+      instagram: "https://www.instagram.com/hafeez_7724?igsh=dGdlc3gzZTh6NHA0",
+      linkedin: "https://www.linkedin.com/in/hafeez-ahammed-798a87379/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+      email: "hafeezahammed264@gmail.com",
+      order: 1
     },
     {
-      name: "James Wilson",
+      name: "Mohammed Sanaulla",
       role: "Backend Developer",
-      specialty: "Cloud Architecture",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=James",
-    },
-    {
-      name: "Emily Zhang",
-      role: "Mobile Developer",
-      specialty: "iOS & Android",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
-    },
-    {
-      name: "Michael Brown",
-      role: "DevOps Engineer",
-      specialty: "Infrastructure",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
-    },
-    {
-      name: "Lisa Anderson",
-      role: "Frontend Developer",
-      specialty: "React & Vue",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
-    },
+      specialty: "UI/UX Design & APIs",
+      image: "/images/uploads/sanaulla.jpg",
+      instagram: "https://www.instagram.com/sho3b.6?igsh=MWVsNzVkZ3dnYzE1dg%3D%3D",
+      linkedin: "https://linkedin.com/in/sanaulla-profile",
+      email: "sanaulla@codersclub.dev",
+      order: 2
+    }
   ];
+
+  // Sort members by order
+  const sortedMembers = [...members].sort((a, b) => a.order - b.order);
 
   return (
     <div className="min-h-screen pt-24">
@@ -60,9 +70,9 @@ const Members = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {members.map((member, index) => (
+            {sortedMembers.map((member, index) => (
               <div
-                key={index}
+                key={member.order}
                 className="glass rounded-2xl p-8 text-center hover:glow transition-all group animate-scale-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
@@ -82,24 +92,34 @@ const Members = () => {
                   {member.specialty}
                 </p>
                 <div className="flex justify-center space-x-3">
-                  <a
-                    href="#"
-                    className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
-                  >
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                  <a
-                    href="#"
-                    className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
-                  >
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                  <a
-                    href="#"
-                    className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
-                  >
-                    <Mail className="w-5 h-5" />
-                  </a>
+                  {member.instagram && (
+                    <a
+                      href={member.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
+                    >
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                  )}
+                  {member.linkedin && (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
+                    >
+                      <Linkedin className="w-5 h-5" />
+                    </a>
+                  )}
+                  {member.email && (
+                    <a
+                      href={`mailto:${member.email}`}
+                      className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
+                    >
+                      <Mail className="w-5 h-5" />
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
