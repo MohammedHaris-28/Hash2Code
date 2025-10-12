@@ -29,7 +29,7 @@ const Members = () => {
       name: "Hafeez Ahammed",
       role: "Software Developer",
       specialty: "Full-Stack Development",
-      image: "src/assets/hafeez.png",
+      image: "/assets/hafeez.png",
       instagram: "https://www.instagram.com/hafeez_7724?igsh=dGdlc3gzZTh6NHA0",
       linkedin: "https://www.linkedin.com/in/hafeez-ahammed-798a87379/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       email: "hafeezahammed264@gmail.com",
