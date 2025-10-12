@@ -1,0 +1,26 @@
+{
+  "storyTitle": "Our Story",
+  "storyContent": "Founded by a group of passionate developers, Coders Club started with a simple mission: to create digital solutions that make a difference. What began as a small team working on weekend projects has grown into a full-fledged development powerhouse.\n\nOver the years, we've had the privilege of working with startups, established businesses, and innovative entrepreneurs. Each project has taught us valuable lessons and helped us refine our craft.\n\nToday, we're proud to offer a comprehensive suite of development services, from web and mobile applications to custom software solutions.",
+  "values": [
+    {
+      "title": "Mission",
+      "description": "To empower businesses with cutting-edge digital solutions that drive growth and innovation.",
+      "icon": "Target"
+    },
+    {
+      "title": "Vision",
+      "description": "To be the leading development team known for excellence, innovation, and client satisfaction.",
+      "icon": "Eye"
+    },
+    {
+      "title": "Excellence",
+      "description": "We maintain the highest standards in code quality, design, and project delivery.",
+      "icon": "Award"
+    },
+    {
+      "title": "Collaboration",
+      "description": "We work closely with clients as partners to achieve shared success.",
+      "icon": "Users"
+    }
+  ]
+}
