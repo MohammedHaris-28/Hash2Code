@@ -39,7 +39,7 @@ const Navbar = () => {
               <div className="absolute inset-0 blur-xl bg-accent/30 group-hover:bg-accent/50 transition-all" />
             </div>
             <span className="text-2xl font-display font-bold text-gradient">
-              Coders Club
+                  # 2 Code
             </span>
           </Link>
 

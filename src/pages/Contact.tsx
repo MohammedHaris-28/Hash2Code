@@ -5,8 +5,8 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email",
-      content: "hello@codersclub.dev",
-      link: "mailto:hello@codersclub.dev",
+      content: "hash2code@gmail.com",
+      link: "mailto:hash2code@gmail.com",
     },
     {
       icon: Phone,

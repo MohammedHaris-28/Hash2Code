@@ -13,7 +13,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center space-x-2 group">
               <Code2 className="w-8 h-8 text-accent transition-transform group-hover:scale-110" />
               <span className="text-xl font-display font-bold text-gradient">
-                Coders Club
+                #2Code
               </span>
             </Link>
             <p className="text-muted-foreground text-sm">
@@ -80,7 +80,7 @@ const Footer = () => {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="mailto:hello@codersclub.dev"
+                href="mailto:hash2code@gmail.com"
                 className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
               >
                 <Mail className="w-5 h-5" />
@@ -96,7 +96,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border/50 text-center text-muted-foreground text-sm">
-          <p>&copy; {currentYear} Coders Club. All rights reserved.</p>
+          <p>&copy; {currentYear} #2Code. All rights reserved.</p>
         </div>
       </div>
     </footer>

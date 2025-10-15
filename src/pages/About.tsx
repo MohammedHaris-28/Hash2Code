@@ -31,7 +31,7 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-6 animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl font-display font-bold">
-              About <span className="text-gradient">Coders Club</span>
+              About <span className="text-gradient">#2Code</span>
             </h1>
             <p className="text-xl text-muted-foreground">
               A passionate team of developers, designers, and innovators dedicated to building exceptional digital experiences.
@@ -49,7 +49,7 @@ const About = () => {
             </h2>
             <div className="space-y-6 text-lg text-muted-foreground animate-fade-in-up">
               <p>
-                Founded by a group of passionate developers, Coders Club started with a simple project: that make a difference. What began as a small team working on weekend projects has grown into a full-fledged development team.
+                Founded by a group of passionate developers, #2Code started with a simple project that make a difference. What began as a small team working on weekend projects has grown into a full-fledged development team.
               </p>
               <p>
                 Over the time, Each project has taught us valuable lessons and helped us refine our craft.

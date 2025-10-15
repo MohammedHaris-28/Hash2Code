@@ -20,8 +20,9 @@ const Members = () => {
       name: "Mohammed Haris",
       role: "Software Developer",
       specialty: "Full-Stack Development",
-      image: "/assets/harisprofile.jpeg",
-      instagram: "https://www.instagram.com/mohammed_haris_28?igsh=MWhtdWpicGQxeDhvNA%3D%3D",
+      image: "/assets/haris.jpeg",
+      instagram:
+        "https://www.instagram.com/mohammed_haris_28?igsh=MWhtdWpicGQxeDhvNA%3D%3D",
       email: "mohammedharis",
       order: 0,
     },
@@ -30,7 +31,8 @@ const Members = () => {
       role: "Software Developer",
       specialty: "Full-Stack Development",
       image: "/assets/hafeez.png",
-      instagram: "https://www.instagram.com/hafeez_7724?igsh=dGdlc3gzZTh6NHA0",
+      instagram:
+        "https://www.instagram.com/hafeez_7724?igsh=dGdlc3gzZTh6NHA0",
       linkedin:
         "https://www.linkedin.com/in/hafeez-ahammed-798a87379/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       email: "hafeezahammed264@gmail.com",
@@ -42,9 +44,11 @@ const Members = () => {
       role: "Backend Developer",
       specialty: "UI/UX Design & APIs",
       image: "/assets/shoaibprofile.png",
-      instagram: "https://www.instagram.com/sho3b.6?igsh=MWVsNzVkZ3dnYzE1dg%3D%3D",
+      instagram:
+        "https://www.instagram.com/sho3b.6?igsh=MWVsNzVkZ3dnYzE1dg%3D%3D",
       linkedin: "https://linkedin.com/in/sanaulla-profile",
       email: "https://mohammedshoaib.netlify.app/",
+      website: "https://mohammedshoaib.netlify.app/",
       order: 2,
     },
   ];
@@ -85,8 +89,11 @@ const Members = () => {
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="relative w-full h-full rounded-full border-4 border-accent/30 group-hover:border-accent transition-all 
-                               object-cover object-center shadow-lg"
+                    className={`relative w-full h-full rounded-full border-4 border-accent/30 group-hover:border-accent transition-all object-cover shadow-lg ${
+                      member.name === "Mohammed Haris"
+                        ? "object-[center_20%]" // move Haris's image slightly down
+                        : "object-center"
+                    }`}
                   />
                 </div>
 
