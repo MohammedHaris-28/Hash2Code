@@ -19,11 +19,11 @@ const Members = () => {
     {
       name: "Mohammed Haris",
       role: "Software Developer",
-      specialty: "Full-Stack Development & Cybersecurity",
+      specialty: "Full-Stack Development",
       image: "/images/uploads/haris.jpg",
-      instagram:"https://www.instagram.com/mohammed_haris_28?igsh=MWhtdWpicGQxeDhvNA%3D%3D",
+      instagram: "https://www.instagram.com/mohammed_haris_28?igsh=MWhtdWpicGQxeDhvNA%3D%3D",
       email: "mohammedharis",
-      order: 0,
+      order: 0
     },
     {
       name: "Hafeez Ahammed",
@@ -40,13 +40,12 @@ const Members = () => {
       name: "Mohammed Shoaib",
       role: "Backend Developer",
       specialty: "UI/UX Design & APIs",
-      image: "/images/uploads/sanaulla.jpg",
+      image: "/assets/shoaib.jpeg",
       instagram: "https://www.instagram.com/sho3b.6?igsh=MWVsNzVkZ3dnYzE1dg%3D%3D",
       linkedin: "https://linkedin.com/in/sanaulla-profile",
       email: "sanaulla@codersclub.dev",
-      website: "https://sanaulla.dev",
-      order: 2,
-    },
+      order: 2
+    }
   ];
 
   // Sort members by order
