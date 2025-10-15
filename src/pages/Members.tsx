@@ -1,4 +1,4 @@
-import { Linkedin, Instagram, Mail } from "lucide-react";
+import { Linkedin, Instagram, Mail, Globe } from "lucide-react";
 
 // Define the member type
 interface Member {
@@ -9,21 +9,21 @@ interface Member {
   instagram?: string;
   linkedin?: string;
   email?: string;
+  website?: string;
   order: number;
 }
 
 const Members = () => {
-  // This would typically come from your CMS/data fetching
-  // For now, using static data that matches the CMS structure
+  // Static data (example)
   const members: Member[] = [
     {
       name: "Mohammed Haris",
       role: "Software Developer",
-      specialty: "Full-Stack Development",
+      specialty: "Full-Stack Development & Cybersecurity",
       image: "/images/uploads/haris.jpg",
-      instagram: "https://www.instagram.com/mohammed_haris_28?igsh=MWhtdWpicGQxeDhvNA%3D%3D",
+      instagram:"https://www.instagram.com/mohammed_haris_28?igsh=MWhtdWpicGQxeDhvNA%3D%3D",
       email: "mohammedharis",
-      order: 0
+      order: 0,
     },
     {
       name: "Hafeez Ahammed",
@@ -31,20 +31,22 @@ const Members = () => {
       specialty: "Full-Stack Development",
       image: "/assets/hafeez.png",
       instagram: "https://www.instagram.com/hafeez_7724?igsh=dGdlc3gzZTh6NHA0",
-      linkedin: "https://www.linkedin.com/in/hafeez-ahammed-798a87379/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+      linkedin:"https://www.linkedin.com/in/hafeez-ahammed-798a87379/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       email: "hafeezahammed264@gmail.com",
-      order: 1
+      website: "https://hafeezahammed.netlify.app/",
+      order: 1,
     },
     {
-      name: "Mohammed Sanaulla",
+      name: "Mohammed Shoaib",
       role: "Backend Developer",
       specialty: "UI/UX Design & APIs",
       image: "/images/uploads/sanaulla.jpg",
       instagram: "https://www.instagram.com/sho3b.6?igsh=MWVsNzVkZ3dnYzE1dg%3D%3D",
       linkedin: "https://linkedin.com/in/sanaulla-profile",
       email: "sanaulla@codersclub.dev",
-      order: 2
-    }
+      website: "https://sanaulla.dev",
+      order: 2,
+    },
   ];
 
   // Sort members by order
@@ -60,7 +62,8 @@ const Members = () => {
               Meet Our <span className="text-gradient">Team</span>
             </h1>
             <p className="text-xl text-muted-foreground">
-              Talented individuals who bring creativity, expertise, and passion to every project.
+              Talented individuals who bring creativity, expertise, and passion
+              to every project.
             </p>
           </div>
         </div>
@@ -91,7 +94,19 @@ const Members = () => {
                 <p className="text-muted-foreground text-sm mb-6">
                   {member.specialty}
                 </p>
+
+                {/* Social Icons */}
                 <div className="flex justify-center space-x-3">
+                  {member.website && (
+                    <a
+                      href={member.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
+                    >
+                      <Globe className="w-5 h-5" />
+                    </a>
+                  )}
                   {member.instagram && (
                     <a
                       href={member.instagram}
@@ -135,7 +150,8 @@ const Members = () => {
               Want to <span className="text-gradient">Join Us?</span>
             </h2>
             <p className="text-xl text-muted-foreground">
-              We're always looking for talented individuals who share our passion for creating exceptional digital experiences.
+              We're always looking for talented individuals who share our
+              passion for creating exceptional digital experiences.
             </p>
             <a
               href="mailto:careers@codersclub.dev"
