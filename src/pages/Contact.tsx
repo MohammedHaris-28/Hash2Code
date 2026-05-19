@@ -5,14 +5,14 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email",
-      content: "hash2code@gmail.com",
-      link: "mailto:hash2code@gmail.com",
+      content: "hash2codeteam@gmail.com",
+      link: "mailto:hash2codeteam@gmail.com",
     },
     {
       icon: Phone,
       title: "Phone",
-      content: "+91 7411723428",
-      link: "tel:+917411723428",
+      content: "+91 9036486726",
+      link: "tel:+919036486726",
     },
     {
       icon: MapPin,

@@ -42,11 +42,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                
                 <Link
-                  to="/members"
+                  to="/projects"
                   className="text-muted-foreground hover:text-accent transition-colors"
                 >
-                  Members
+                  Projects
                 </Link>
               </li>
             </ul>
@@ -65,27 +66,6 @@ const Footer = () => {
 
           {/* Contact & Social */}
           <div>
-            <h3 className="font-display font-semibold mb-4">Connect</h3>
-            <div className="flex space-x-4 mb-4">
-              <a
-                href="#"
-                className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="mailto:hash2code@gmail.com"
-                className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:glow-accent transition-all"
-              >
-                <Mail className="w-5 h-5" />
-              </a>
-            </div>
             <Link
               to="/contact"
               className="text-sm text-accent hover:underline"

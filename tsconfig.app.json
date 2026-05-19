@@ -21,10 +21,14 @@
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
 
-    "baseUrl": ".",
+    /* Path Alias */
     "paths": {
-      "@/*": ["./src/*"]
-    }
+  "@/*": ["./src/*"]
+},
+
+    /* Temporary TS6 silence */
+    "ignoreDeprecations": "6.0"
   },
+
   "include": ["src"]
 }
