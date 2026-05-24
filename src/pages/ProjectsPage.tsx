@@ -34,6 +34,7 @@ const Projects = () => {
         "Barcode Scanning",
         "Offline Support",
       ],
+       url: "https://pulspense.netlify.app/",
       icon: <BarChart3 className="w-8 h-8" />,
       order: 0,
     },
