@@ -37,7 +37,7 @@ const Projects = () => {
         "EMI Reminder",
         "Offline Support",
       ],
-      icon: BarChart3,
+      icon: <BarChart3 className="w-8 h-8" />,
       order: 0,
       imageUrl: "/src/assets/pulspense.png" // Swap with your actual image path
     },
