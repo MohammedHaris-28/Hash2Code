@@ -10,6 +10,15 @@ import {
   CheckCircle2,
   ArrowUpRight
 } from "lucide-react";
+import Architects from "@/assets/architecture.png"; // Dr. Akarsh Niranjan Profile Portrait
+import Bloodsync from "@/assets/bloodsync.png"; 
+import pulspense from "@/assets/pulspense.png";
+import malenadu from "@/assets/malenadu aroma.png";
+import thunder from "@/assets/thunderfitness.png";
+import sirmvgsc from "@/assets/sirmvgsc.png";
+import restrosync from "@/assets/restrosync.png";
+
+
 
 interface Project {
   title: string;
@@ -40,7 +49,7 @@ const Projects = () => {
       url: "https://pulspense.netlify.app/",
       icon: BarChart3,
       order: 0,
-      imageUrl: "/src/assets/pulspense.png" // Swap with your actual image path
+      imageUrl: pulspense, // Swap with your actual image path
     },
     {
       title: "ThunderFitness Gym",
@@ -55,7 +64,7 @@ const Projects = () => {
       url: "https://thunderfitnessbdvt.netlify.app/",
       icon: Flame,
       order: 1,
-      imageUrl: "/src/assets/thunderfitness.png" // Swap with your actual image path
+      imageUrl: thunder, // Swap with your actual image path
     },
     {
       title: "Malenadu Aroma",
@@ -70,7 +79,7 @@ const Projects = () => {
       url: "https://malenaduaroma.netlify.app/",
       icon: Coffee,
       order: 2,
-      imageUrl: "/src/assets/malenadu aroma.png" // Swap with your actual image path
+      imageUrl: malenadu, // Swap with your actual image path
     },
     {
       title: "SMVGSC Library",
@@ -85,7 +94,7 @@ const Projects = () => {
       url: "https://sirmvgsclibrary.netlify.app/",
       icon: Globe,
       order: 3,
-      imageUrl: "/src/assets/sirmvgsc.png" // Swap with your actual image path
+      imageUrl: sirmvgsc, // Swap with your actual image path
     },
     {
       title: "BloodSync",
@@ -100,7 +109,7 @@ const Projects = () => {
       url: "https://bloodsyncproject.vercel.app/",
       icon: Database,
       order: 5,
-      imageUrl: "/src/assets/bloodsync.png" // Swap with your actual image path
+      imageUrl: Bloodsync, // Swap with your actual image path
     },
     {
       title: "#2Code-RestroSync",
@@ -115,7 +124,7 @@ const Projects = () => {
       url: "https://hash2codetools.netlify.app/",
       icon: Database,
       order: 6,
-      imageUrl: "/src/assets/restrosync.png" // Swap with your actual image path
+      imageUrl: restrosync, // Swap with your actual image path
     },
     {
       title: "Architects Portfolio Website",
@@ -130,7 +139,7 @@ const Projects = () => {
       url: "https://engineerswebsite.netlify.app/",
       icon: Smartphone,
       order: 7,
-      imageUrl: "/src/assets/architecture.png" // Swap with your actual image path
+      imageUrl: Architects, // Swap with your actual image path
     },
   ];
 
