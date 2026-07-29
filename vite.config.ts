@@ -14,6 +14,11 @@ export default defineConfig({
 
     Sitemap({
       hostname: "https://hash2codeteam.vercel.app",
+
+      // Exclude files/pages that should not appear in sitemap
+      exclude: [
+        "/google2384f91d01ca4262",
+      ],
     }),
   ],
 
