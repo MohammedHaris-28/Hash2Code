@@ -17,7 +17,7 @@ import malenadu from "@/assets/malenadu aroma.png";
 import thunder from "@/assets/thunderfitness.png";
 import sirmvgsc from "@/assets/sirmvgsc.png";
 import restrosync from "@/assets/restrosync.png";
-
+import campusclock from "@/assets/campusclock.png";
 
 
 interface Project {
@@ -121,10 +121,25 @@ const Projects = () => {
         "Restaurant POS Terminal Core",
         "Real-Time Order Streams",
       ],
-      url: "https://hash2codetools.netlify.app/",
+      url: "https://restrosync-hash2code.netlify.app/",
       icon: Database,
       order: 6,
       imageUrl: restrosync, // Swap with your actual image path
+    },
+   {
+      title: "#2Code-Campus Clock",
+      type: "Software",
+      description: "A unified, AI-powered campus management platform.",
+      technologies: ["Flutter", "Django","Postgresql"],
+      features: [
+        "Attendance,academic report and fees management",
+        "Parents & Teachers App ",
+        "Modern UI/UX ,automated task executions",
+      ],
+      url: "https://campusclockproject.netlify.app/",
+      icon: Database,
+      order: 7,
+      imageUrl: campusclock, // Swap with your actual image path
     },
     {
       title: "Architects Portfolio Website",
@@ -138,7 +153,7 @@ const Projects = () => {
       ],
       url: "https://engineerswebsite.netlify.app/",
       icon: Smartphone,
-      order: 7,
+      order: 8,
       imageUrl: Architects, // Swap with your actual image path
     },
   ];
