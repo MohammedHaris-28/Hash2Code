@@ -10,6 +10,10 @@ import Members from "./pages/Members";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Projects from "./pages/ProjectsPage";
+import Clients from "./pages/ClientsPage";
+import { ScrollToTop } from "./components/ScrollToTop";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsPage";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +23,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+      <ScrollToTop />
         <Routes>
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
@@ -26,6 +31,9 @@ const App = () => (
             <Route path="/members" element={<Members />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
