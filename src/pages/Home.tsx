@@ -1,783 +1,600 @@
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import {
+  ArrowDown,
   ArrowRight,
-  Code2,
-  Smartphone,
-  Lightbulb,
-  Rocket,
-  CheckCircle2,
-  Activity,
   ArrowUpRight,
-  Terminal,
-  ShieldCheck,
-  Layers3,
-  Workflow,
-  Command,
-  Cpu,
-  Globe2,
-  Zap,
-  Menu,
+  Asterisk,
+  Check,
+  ChevronDown,
+  MapPin,
+  Plus,
+  Sparkles,
+  X,
 } from "lucide-react";
 
 const SITE_URL = "https://hash2codeteam.vercel.app/";
 
+/**
+ * Temporary visual assets.
+ * Replace these URLs with imports from src/assets when your final images are ready.
+ */
+const image = (id: string, width = 1600) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=85`;
+
+const PH = {
+  web: image("photo-1498050108023-c5249f4df085"),
+  social: image("photo-1611162617213-7d7a39e9b1d7"),
+  video: image("photo-1574717024653-61fd2cf4d44d"),
+  graphic: image("photo-1561070791-2526d30994b5"),
+  app: image("photo-1512941937669-90a1b58e7e9c"),
+  software: image("photo-1551288049-bebda4e38f71"),
+  product: image("photo-1460925895917-afdab827c52f"),
+  hero: image("photo-1558655146-d09347e92766", 1800),
+};
+
 const services = [
   {
     number: "01",
-    icon: Code2,
     title: "Website Development",
-    description:
-      "High-performance business websites, conversion-focused landing pages, and scalable web applications built around your goals.",
-    tags: ["React", "TypeScript", "Web"],
+    desc: "Distinctive websites, landing pages and web applications designed to move businesses forward.",
+    image: PH.web,
+    tag: "Digital presence",
   },
   {
     number: "02",
-    icon: Smartphone,
-    title: "Mobile App Development",
-    description:
-      "Intuitive Android, iOS, and cross-platform applications designed to deliver a consistent experience across devices.",
-    tags: ["Flutter", "Mobile", "UX"],
+    title: "Social Media Marketing & Management",
+    desc: "A considered social presence, consistent content and campaigns that build real connection.",
+    image: PH.social,
+    tag: "Brand growth",
   },
   {
     number: "03",
-    icon: Workflow,
-    title: "Custom Software & Automation",
-    description:
-      "Purpose-built business software, intelligent workflows, and connected systems that reduce repetitive manual work.",
-    tags: ["APIs", "Automation", "Cloud"],
+    title: "Video Editing",
+    desc: "Reels, campaign films and brand stories edited with rhythm, clarity and purpose.",
+    image: PH.video,
+    tag: "Visual storytelling",
   },
   {
     number: "04",
-    icon: Rocket,
-    title: "Digital Product Engineering",
-    description:
-      "From an early product concept to a production-ready platform, we help turn ideas into useful digital experiences.",
-    tags: ["MVP", "Architecture", "Launch"],
-  },
-];
-
-const techStack = [
-  "React",
-  "TypeScript",
-  "Flutter",
-  "Supabase",
-  "Python",
-  "Django",
-  "JavaScript",
-  "n8n",
-  "C#",
-  "Sanity",
-  "HTML",
-  "CSS",
-];
-
-const principles = [
-  {
-    number: "01",
-    icon: Layers3,
-    title: "Architecture before complexity",
-    desc: "We choose technologies and structures around the actual problem, keeping products maintainable as requirements evolve.",
-  },
-  {
-    number: "02",
-    icon: Lightbulb,
-    title: "Design with a clear purpose",
-    desc: "Every screen, interaction, and workflow should help people understand the product and accomplish something meaningful.",
-  },
-  {
-    number: "03",
-    icon: ShieldCheck,
-    title: "Security in the foundation",
-    desc: "We consider access control, data handling, validation, and deployment practices as part of building reliable software.",
-  },
-  {
-    number: "04",
-    icon: Activity,
-    title: "Performance that matters",
-    desc: "We pay attention to responsive layouts, efficient implementation, accessibility, and the experience on real devices.",
+    title: "Graphic Designing",
+    desc: "Visual identities and creative assets that make every brand touchpoint feel intentional.",
+    image: PH.graphic,
+    tag: "Visual identity",
   },
   {
     number: "05",
-    icon: Workflow,
-    title: "A process you can follow",
-    desc: "Clear scope, visible milestones, and direct communication help keep decisions and delivery aligned throughout a project.",
+    title: "Mobile App Development",
+    desc: "Useful, intuitive mobile experiences built around the people who use them.",
+    image: PH.app,
+    tag: "Mobile experiences",
+  },
+  {
+    number: "06",
+    title: "Custom Software & Automation",
+    desc: "Purpose-built systems and smarter workflows that reduce friction and save time.",
+    image: PH.software,
+    tag: "Business systems",
+  },
+  {
+    number: "07",
+    title: "Digital Product Engineering",
+    desc: "From an early idea to a reliable digital product, we bring the pieces together.",
+    image: PH.product,
+    tag: "Product development",
   },
 ];
 
+const upcomingServices = [
+  "Industrial Designing",
+  "3D Design & Modelling",
+  "Physical Product Design & Development",
+];
+
+const projects = [
+  { title: "Digital experiences", category: "Website development", image: PH.web, index: "01" },
+  { title: "Social-first stories", category: "Social media & content", image: PH.social, index: "02" },
+  { title: "Ideas in motion", category: "Video & creative", image: PH.video, index: "03" },
+  { title: "Products that work", category: "Apps & software", image: PH.app, index: "04" },
+];
+
+const process = [
+  {
+    no: "01",
+    title: "Understand",
+    description: "We start by listening. Your goals, your audience and the real challenge shape everything that follows.",
+  },
+  {
+    no: "02",
+    title: "Imagine",
+    description: "We find the right direction, map the experience and agree on a clear plan before the build begins.",
+  },
+  {
+    no: "03",
+    title: "Create",
+    description: "Design and development come together through focused collaboration, iteration and attention to detail.",
+  },
+  {
+    no: "04",
+    title: "Launch & grow",
+    description: "We deliver, support the handover and help your digital presence keep moving forward.",
+  },
+];
+
+const cities = ["Shivamogga", "Mangalore", "Mysore", "Kozhikode"];
+
+const faqs = [
+  {
+    q: "What can #2Code Studio help with?",
+    a: "We offer website development, social media marketing and management, video editing, graphic designing, mobile app development, custom software and automation, and digital product engineering. Industrial design, 3D design and physical product development are upcoming services.",
+  },
+  {
+    q: "Where do you work?",
+    a: "We work with businesses and teams in Shivamogga, Mangalore, Mysore and Kozhikode.",
+  },
+  {
+    q: "Can you help if I only have an idea?",
+    a: "Yes. We can help shape an early idea, identify the right first step and turn it into a practical plan.",
+  },
+  {
+    q: "How do we get started?",
+    a: "Tell us a little about your project through the contact page. We'll discuss your goals and follow up with a clear scope and next steps.",
+  },
+];
+
+const PillImage = ({ src, alt }: { src: string; alt: string }) => (
+  <span className="h2c-inline-image" aria-label={alt} role="img">
+    <img src={src} alt="" aria-hidden="true" />
+  </span>
+);
+
+const ActionLink = ({
+  to,
+  children,
+  light = false,
+}: {
+  to: string;
+  children: React.ReactNode;
+  light?: boolean;
+}) => (
+  <Link
+    to={to}
+    className={`h2c-action ${light ? "h2c-action-light" : "h2c-action-dark"}`}
+  >
+    <span>{children}</span>
+    <span className="h2c-action-icon"><ArrowUpRight size={17} /></span>
+  </Link>
+);
+
 const Home = () => {
+  const [activeService, setActiveService] = useState(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
   useEffect(() => {
     const previousTitle = document.title;
-    const description =
-      "#2CODE Team builds custom websites, mobile applications, business software, and workflow automation solutions for growing businesses.";
+    document.title = "#2Code Studio | Digital, Creative & Technology";
 
-    document.title =
-      "#2CODE Team | Website, App & Custom Software Development";
-
-    let metaDescription = document.querySelector<HTMLMetaElement>(
-      'meta[name="description"]',
-    );
-    const createdDescription = !metaDescription;
-
-    if (!metaDescription) {
-      metaDescription = document.createElement("meta");
-      metaDescription.name = "description";
-      document.head.appendChild(metaDescription);
+    let meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    const createdMeta = !meta;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "description";
+      document.head.appendChild(meta);
     }
+    const previousDescription = meta.content;
+    meta.content =
+      "#2Code Studio is a digital and creative studio for website development, social media, video, design, apps and custom software.";
 
-    const previousDescription = metaDescription.content;
-    metaDescription.content = description;
-
-    let canonical = document.querySelector<HTMLLinkElement>(
-      'link[rel="canonical"]',
-    );
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     const createdCanonical = !canonical;
-
     if (!canonical) {
       canonical = document.createElement("link");
       canonical.rel = "canonical";
       document.head.appendChild(canonical);
     }
-
     const previousCanonical = canonical.href;
     canonical.href = SITE_URL;
 
     return () => {
       document.title = previousTitle;
-
-      if (metaDescription) {
-        if (createdDescription) {
-          metaDescription.remove();
-        } else {
-          metaDescription.content = previousDescription;
-        }
-      }
-
-      if (canonical) {
-        if (createdCanonical) {
-          canonical.remove();
-        } else {
-          canonical.href = previousCanonical;
-        }
-      }
+      if (createdMeta) meta?.remove();
+      else if (meta) meta.content = previousDescription;
+      if (createdCanonical) canonical?.remove();
+      else if (canonical) canonical.href = previousCanonical;
     };
   }, []);
 
   return (
-    <main className="w-full overflow-x-clip bg-[#F8F9FA] font-sans text-neutral-950 antialiased selection:bg-[#50DC7D]/30">
+    <main className="h2c-home">
       <style>{`
-        @keyframes h2c-marquee {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-        @keyframes h2c-scan {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(420%); }
+        .h2c-home {
+          --h2c-bg: #F8F9FA;
+          --h2c-ink: #101211;
+          --h2c-accent: #50DC7D;
+          --h2c-muted: #777D79;
+          --h2c-line: rgba(16,18,17,.14);
+          width: 100%;
+          overflow: clip;
+          background: var(--h2c-bg);
+          color: var(--h2c-ink);
+          font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+          -webkit-font-smoothing: antialiased;
         }
-
-        @keyframes h2c-blink {
-          50% { opacity: .3; }
+        .h2c-home * { box-sizing: border-box; }
+        .h2c-display { font-family: "Sora", sans-serif;, Inter, sans-serif; font-weight: 700; letter-spacing: -.075em; }
+        .h2c-mono { font-family: "DM Mono", monospace; letter-spacing: .04em; text-transform: uppercase; }
+        .h2c-wrap { width: min(100% - 48px, 1480px); margin-inline: auto; }
+        .h2c-kicker { display:flex; align-items:center; gap:10px; color:#626964; font: 11px "DM Mono",monospace; letter-spacing:.1em; text-transform:uppercase; }
+        .h2c-kicker:before { content:""; width:8px; height:8px; border-radius:50%; background:var(--h2c-accent); box-shadow:0 0 0 4px rgba(80,220,125,.14); }
+        .h2c-inline-image { display:inline-flex; width:.92em; height:.55em; margin:0 .08em; border-radius:999px; overflow:hidden; vertical-align:middle; transform:translateY(-.07em); }
+        .h2c-inline-image img { width:100%; height:100%; object-fit:cover; }
+        .h2c-action { min-height:54px; display:inline-flex; align-items:center; justify-content:space-between; gap:24px; padding:7px 8px 7px 23px; border-radius:999px; font-size:13px; font-weight:650; text-decoration:none; transition:transform .25s ease,background .25s ease; }
+        .h2c-action:hover { transform:translateY(-3px); }
+        .h2c-action-dark { background:var(--h2c-ink); color:white; }
+        .h2c-action-light { border:1px solid var(--h2c-line); color:var(--h2c-ink); background:transparent; }
+        .h2c-action-icon { width:38px; height:38px; display:grid; place-items:center; border-radius:50%; background:var(--h2c-accent); color:var(--h2c-ink); }
+        .h2c-marquee-track { display:flex; width:max-content; animation:h2c-marquee 34s linear infinite; }
+        @keyframes h2c-marquee { to { transform:translateX(-50%); } }
+        .h2c-reveal { animation:h2c-rise .8s cubic-bezier(.2,.7,.2,1) both; }
+        @keyframes h2c-rise { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+        .h2c-service-row { display:grid; grid-template-columns:54px minmax(0,1fr) 48px; gap:18px; align-items:center; padding:25px 0; border-top:1px solid var(--h2c-line); text-decoration:none; color:inherit; }
+        .h2c-service-row:last-child { border-bottom:1px solid var(--h2c-line); }
+        .h2c-service-row .h2c-service-title { transition:transform .3s ease,color .3s ease; }
+        .h2c-service-row:hover .h2c-service-title, .h2c-service-row.is-active .h2c-service-title { transform:translateX(7px); color:var(--h2c-ink); }
+        .h2c-service-row .h2c-service-arrow { transition:background .25s ease,transform .25s ease; }
+        .h2c-service-row:hover .h2c-service-arrow, .h2c-service-row.is-active .h2c-service-arrow { background:var(--h2c-accent); transform:rotate(45deg); border-color:var(--h2c-accent); }
+        .h2c-work-card img { transition:transform .8s cubic-bezier(.2,.7,.2,1); }
+        .h2c-work-card:hover img { transform:scale(1.055); }
+        .h2c-work-card:after { content:""; position:absolute; inset:35% 0 0; background:linear-gradient(transparent,rgba(16,18,17,.72)); pointer-events:none; }
+        .h2c-faq-content { display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
+        .h2c-faq-content > div { overflow:hidden; }
+        .h2c-faq-open .h2c-faq-content { grid-template-rows:1fr; }
+        .h2c-snap { scrollbar-width:none; }
+        .h2c-snap::-webkit-scrollbar { display:none; }
+        @media (max-width: 767px) {
+          .h2c-wrap { width:min(100% - 36px,1480px); }
+          .h2c-service-row { grid-template-columns:34px minmax(0,1fr) 40px; gap:10px; padding:21px 0; }
+          .h2c-service-row h3 { font-size:23px !important; }
         }
-
-        .h2c-marquee {
-          animation: h2c-marquee 32s linear infinite;
-        }
-
-        .h2c-scan {
-          animation: h2c-scan 7s linear infinite;
-        }
-
-        .h2c-cursor {
-          animation: h2c-blink 1.1s steps(2, start) infinite;
-        }
-
-        .h2c-display {
-          font-family: "Space Grotesk", "Arial", sans-serif;
-          font-weight: 700;
-          letter-spacing: -.075em;
-        }
-
-        .h2c-mono {
-          font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
-        }
-
         @media (prefers-reduced-motion: reduce) {
-          .h2c-marquee,
-          .h2c-scan,
-          .h2c-cursor {
-            animation: none !important;
-          }
-
-          *, *::before, *::after {
-            scroll-behavior: auto !important;
-            transition-duration: .01ms !important;
-          }
+          .h2c-marquee-track,.h2c-reveal { animation:none !important; }
+          .h2c-home * { scroll-behavior:auto !important; transition-duration:.01ms !important; }
         }
       `}</style>
 
-      {/* =====================================================
-          HERO — WIDE DESKTOP / PURPOSE-BUILT MOBILE
-      ====================================================== */}
-      <section className="relative isolate overflow-hidden border-b border-neutral-200 bg-white pt-28 sm:pt-32 lg:min-h-[760px] lg:pt-36">
-        {/* Technical grid, not a gradient */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-70"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #e9ecef 1px, transparent 1px), linear-gradient(to bottom, #e9ecef 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-            maskImage:
-              "linear-gradient(to bottom, black 0%, black 65%, transparent 100%)",
-          }}
-        />
+      {/* HERO */}
+      <section className="relative pb-0 pt-28 sm:pt-36 lg:pt-40">
+        <div className="h2c-wrap">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="h2c-kicker">Independent digital & creative studio</p>
+            <p className="h2c-mono text-[10px] text-neutral-500">Based in India · Working everywhere</p>
+          </div>
 
-        <div className="relative mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
-          <div className="grid items-center gap-12 pb-14 sm:pb-16 lg:grid-cols-[minmax(0,1.04fr)_minmax(420px,0.96fr)] lg:gap-10 lg:pb-20 xl:gap-16">
-            {/* LEFT — EDITORIAL HEADLINE */}
-            <div className="relative z-10 min-w-0">
-              <div className="mb-7 flex flex-wrap items-center gap-3">
-                
-                <span className="h2c-mono text-[10px] uppercase tracking-wider text-neutral-400">
-                  #2CODE / 001
-                </span>
-              </div>
-
-              <h1 className="h2c-display max-w-[850px] text-[clamp(3.45rem,7.2vw,7.35rem)] leading-[.91] text-neutral-950">
-                Ideas into
+          <div className="mt-12 grid items-end gap-10 lg:grid-cols-[1.2fr_.8fr] lg:gap-16">
+            <div className="h2c-reveal">
+              <h1 className="h2c-display max-w-[1050px] text-[clamp(3.6rem,9.5vw,9.4rem)] leading-[.87]">
+                We make
                 <br />
-                <span className="relative inline-block">
-                  <span className="relative z-10">digital</span>
-                  <span
-                    aria-hidden="true"
-                    className="absolute bottom-[.03em] left-0 z-0 h-[.17em] w-full bg-[#50DC7D]"
-                  />
-                </span>
+                ideas <PillImage src={PH.hero} alt="Creative visual" />
                 <br />
-                <span className="text-neutral-400">realities.</span>
+                <span className="text-neutral-400">work in the</span>
+                <br />
+                real world<span className="text-[#50DC7D]">.</span>
               </h1>
-
-              <p className="mt-7 max-w-[570px] text-[15px] leading-7 text-neutral-600 sm:mt-8 sm:text-lg sm:leading-8">
-                #2CODE Team builds{" "}
-                <strong className="font-semibold text-neutral-900">
-                  websites, mobile apps, custom software, and business
-                  automation
-                </strong>{" "}
-                for ideas ready to move forward.
+            </div>
+            <div className="h2c-reveal pb-2 lg:pb-4" style={{ animationDelay: "140ms" }}>
+              <p className="max-w-[430px] text-base leading-8 text-neutral-600 sm:text-lg">
+                #2Code Studio is where thoughtful design, technology and creative
+                thinking come together to build brands and digital experiences
+                that move businesses forward.
               </p>
-
-              <div className="mt-8 flex flex-col gap-3 min-[420px]:flex-row sm:mt-9">
-                <Link to="/contact" className="w-full min-[420px]:w-auto">
-                  <Button className="group h-12 w-full rounded-none bg-neutral-950 px-5 text-sm font-semibold text-white hover:bg-neutral-800 sm:h-14 sm:px-6">
-                    Discuss your project
-                    <ArrowRight className="ml-3 h-4 w-4 text-[#50DC7D] transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-
-                <Link
-                  to="/projects"
-                  className="inline-flex h-12 items-center justify-center gap-2 border border-neutral-200 bg-white px-5 text-sm font-semibold text-neutral-800 transition-colors hover:border-neutral-400 sm:h-14"
-                >
-                  Explore our work
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <ActionLink to="/contact">Start a project</ActionLink>
+                <ActionLink to="/projects" light>Explore our work</ActionLink>
               </div>
+              <div className="mt-12 flex items-end gap-4 border-t border-neutral-300 pt-5">
+                <span className="h2c-display text-6xl leading-none sm:text-7xl">50<span className="text-[#50DC7D]">+</span></span>
+                <span className="pb-1 text-sm leading-5 text-neutral-500">clients served<br />and counting</span>
+                <span className="ml-auto hidden pb-1 text-right text-xs leading-5 text-neutral-500 sm:block">Digital craft.<br />Real-world impact.</span>
+              </div>
+            </div>
+          </div>
 
-              {/* Compact proof-free value statements */}
-              <div className="mt-9 flex flex-wrap gap-x-5 gap-y-3 border-t border-neutral-200 pt-5 sm:mt-10 sm:gap-x-7">
-                {[
-                  "Built around your goals",
-                  "Responsive by design",
-                  "From concept to launch",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-2 text-xs text-neutral-600"
-                  >
-                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[#24a851]" />
+          <div className="relative mt-16 overflow-hidden rounded-[26px] bg-[#DDE2DE] sm:mt-20 sm:rounded-[34px]">
+            <img src={PH.hero} alt="Creative studio visual placeholder" className="h-[290px] w-full object-cover sm:h-[430px] lg:h-[560px]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#101211]/55 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6 flex flex-wrap items-end justify-between gap-5 text-white sm:bottom-10 sm:left-10 sm:right-10">
+              <div>
+                <p className="h2c-mono text-[10px] text-white/70">Strategy / Design / Technology</p>
+                <p className="h2c-display mt-2 max-w-xl text-3xl leading-[.98] sm:text-5xl">Good work starts with a better question.</p>
+              </div>
+              <a href="#services" className="grid h-12 w-12 place-items-center rounded-full bg-[#50DC7D] text-[#101211] transition-transform hover:translate-y-1" aria-label="Scroll to services">
+                <ArrowDown size={20} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-16 overflow-hidden border-y border-neutral-200 bg-[#101211] py-5 text-white sm:mt-20">
+          <div className="h2c-marquee-track">
+            {[0, 1].map((copy) => (
+              <div key={copy} className="flex shrink-0 items-center gap-8 pr-8">
+                {["Design with intent", "Build with purpose", "Create what matters", "Grow with clarity", "Digital experiences"].map((item) => (
+                  <span key={`${copy}-${item}`} className="flex items-center gap-8 whitespace-nowrap">
+                    <span className="h2c-display text-2xl sm:text-4xl">{item}</span>
+                    <Asterisk className="h-6 w-6 text-[#50DC7D] sm:h-8 sm:w-8" />
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* INTRO / STUDIO POSITIONING */}
+      <section className="h2c-wrap py-24 sm:py-32">
+        <div className="grid gap-10 lg:grid-cols-[.55fr_1.45fr] lg:gap-20">
+          <p className="h2c-kicker">A studio built around ideas</p>
+          <div>
+            <h2 className="h2c-display max-w-5xl text-4xl leading-[1.02] sm:text-6xl lg:text-[5.2rem]">
+              We bring digital, creative and technology together
+              <span className="text-neutral-400"> to help ambitious ideas find their place.</span>
+            </h2>
+            <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <p className="max-w-xl text-sm leading-7 text-neutral-600 sm:text-base">
+                From the first sketch to the final launch, we connect the details
+                that make a business memorable, useful and ready for what comes next.
+              </p>
+              <Link to="/about" className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold hover:gap-4 transition-all">
+                More about #2Code <ArrowUpRight size={17} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section id="services" className="bg-white py-24 sm:py-32">
+        <div className="h2c-wrap">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="h2c-kicker">What we do</p>
+              <h2 className="h2c-display mt-6 max-w-3xl text-5xl leading-[.95] sm:text-7xl">One studio.<br />Many ways forward<span className="text-[#50DC7D]">.</span></h2>
+            </div>
+            <p className="max-w-xs text-sm leading-7 text-neutral-500">A connected set of services for building, presenting and growing your business.</p>
+          </div>
+
+          <div className="mt-14 grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:gap-16">
+            <div className="hidden lg:block">
+              <div className="sticky top-28 overflow-hidden rounded-[26px] bg-neutral-100">
+                <div className="relative aspect-[4/5]">
+                  {services.map((service, index) => (
+                    <img
+                      key={service.number}
+                      src={service.image}
+                      alt={service.title}
+                      className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ${activeService === index ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
+                    />
+                  ))}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#101211]/75 to-transparent p-7 pt-28 text-white">
+                    <p className="h2c-mono text-[10px] text-white/70">Featured capability</p>
+                    <p className="h2c-display mt-2 text-3xl">{services[activeService].title}</p>
+                  </div>
+                  <span className="absolute right-5 top-5 rounded-full bg-[#50DC7D] px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-[#101211]">#2Code Studio</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              {services.map((service, index) => (
+                <Link
+                  to="/contact"
+                  key={service.number}
+                  onMouseEnter={() => setActiveService(index)}
+                  onFocus={() => setActiveService(index)}
+                  className={`h2c-service-row ${activeService === index ? "is-active" : ""}`}
+                >
+                  <span className="h2c-mono pt-1 text-[10px] text-neutral-400">{service.number}</span>
+                  <span>
+                    <span className="h2c-mono text-[9px] text-neutral-400">{service.tag}</span>
+                    <h3 className="h2c-display mt-2 text-[clamp(1.65rem,3vw,2.65rem)] leading-[1.05]">{service.title}</h3>
+                    <span className="mt-2 block max-w-lg text-sm leading-6 text-neutral-500">{service.desc}</span>
+                  </span>
+                  <span className="h2c-service-arrow grid h-11 w-11 place-items-center rounded-full border border-neutral-300">
+                    <ArrowUpRight size={18} />
+                  </span>
+                </Link>
+              ))}
+
+              <div className="mt-10 rounded-[22px] border border-dashed border-neutral-300 bg-[#F8F9FA] p-6 sm:p-8">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="h2c-mono text-[10px] text-neutral-500">On the horizon</p>
+                  <span className="rounded-full bg-[#50DC7D]/25 px-3 py-1 text-[10px] font-semibold text-[#245C37]">Upcoming services</span>
+                </div>
+                <h3 className="h2c-display mt-3 text-2xl sm:text-3xl">Taking ideas beyond the screen.</h3>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {upcomingServices.map((service) => (
+                    <span key={service} className="rounded-full border border-neutral-300 bg-white px-4 py-2 text-xs text-neutral-600">{service}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SELECTED WORK */}
+      <section className="py-24 sm:py-32">
+        <div className="h2c-wrap">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="h2c-kicker">A glimpse of what’s possible</p>
+              <h2 className="h2c-display mt-6 text-5xl leading-[.95] sm:text-7xl">Made to make<br />an impression<span className="text-[#50DC7D]">.</span></h2>
+            </div>
+            <Link to="/projects" className="inline-flex items-center gap-2 text-sm font-semibold">View all projects <ArrowUpRight size={17} /></Link>
+          </div>
+
+          <div className="h2c-snap mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
+            {projects.map((project) => (
+              <Link to="/projects" key={project.index} className="h2c-work-card group relative aspect-[.86] w-[82vw] max-w-[490px] shrink-0 snap-start overflow-hidden rounded-[24px] bg-neutral-200 sm:w-[52vw] lg:w-[31vw]">
+                <img src={project.image} alt={project.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                <div className="absolute inset-x-0 bottom-0 z-[1] flex items-end justify-between gap-4 p-6 text-white sm:p-8">
+                  <div>
+                    <p className="h2c-mono text-[9px] text-white/70">{project.category}</p>
+                    <h3 className="h2c-display mt-2 text-3xl sm:text-4xl">{project.title}</h3>
+                  </div>
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#50DC7D] text-[#101211]"><ArrowUpRight size={19} /></span>
+                </div>
+                <span className="h2c-mono absolute left-6 top-6 z-[1] text-[10px] text-white/80">{project.index} / 04</span>
+              </Link>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-neutral-400">Temporary showcase imagery — final project visuals will be added from your assets.</p>
+        </div>
+      </section>
+
+      {/* PARTNERS */}
+      <section className="bg-[#101211] py-20 text-white sm:py-28">
+        <div className="h2c-wrap">
+          <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="h2c-kicker !text-white/55">Creative collaboration</p>
+              <h2 className="h2c-display mt-6 text-5xl leading-[.95] sm:text-7xl">Better together<span className="text-[#50DC7D]">.</span></h2>
+            </div>
+            <div>
+              <p className="max-w-xl text-sm leading-7 text-white/60 sm:text-base">
+                For social media and marketing, we collaborate with creative partners
+                to bring strategy, content and execution together.
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {["Hidden Ants Media", "F_Block_14"].map((partner, index) => (
+                  <div key={partner} className="flex min-h-[112px] items-center justify-between rounded-[18px] border border-white/15 bg-white/[.045] px-6 py-5 transition-colors hover:border-[#50DC7D]/60">
+                    <div>
+                      <p className="h2c-mono text-[9px] text-white/40">Creative partner 0{index + 1}</p>
+                      <p className="h2c-display mt-2 text-2xl sm:text-3xl">{partner}</p>
+                    </div>
+                    <ArrowUpRight className="text-[#50DC7D]" size={20} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PROCESS */}
+      <section className="bg-white py-24 sm:py-32">
+        <div className="h2c-wrap">
+          <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
+            <div>
+              <p className="h2c-kicker">How we work</p>
+              <h2 className="h2c-display mt-6 text-5xl leading-[.95] sm:text-7xl">From first thought to final launch<span className="text-[#50DC7D]">.</span></h2>
+              <p className="mt-6 max-w-sm text-sm leading-7 text-neutral-500">A clear, collaborative process keeps good ideas moving and makes every decision count.</p>
+            </div>
+            <div className="border-t border-neutral-200">
+              {process.map((step) => (
+                <div key={step.no} className="grid gap-4 border-b border-neutral-200 py-7 sm:grid-cols-[70px_1fr_1.2fr] sm:items-start sm:gap-6 sm:py-9">
+                  <span className="h2c-mono text-xs text-neutral-400">{step.no}</span>
+                  <h3 className="h2c-display text-3xl sm:text-4xl">{step.title}</h3>
+                  <p className="max-w-md text-sm leading-7 text-neutral-500">{step.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* REACH + STUDIO FACTS */}
+      <section className="py-24 sm:py-32">
+        <div className="h2c-wrap">
+          <div className="grid gap-5 lg:grid-cols-[1fr_.8fr]">
+            <div className="rounded-[26px] bg-[#50DC7D] p-7 text-[#101211] sm:p-10 lg:p-12">
+              <p className="h2c-mono text-[10px]">Our reach</p>
+              <h2 className="h2c-display mt-6 max-w-2xl text-5xl leading-[.94] sm:text-7xl">Rooted here.<br />Ready to work anywhere.</h2>
+              <p className="mt-6 max-w-md text-sm leading-7 text-[#101211]/70">Working with businesses across Karnataka and Kerala, with a focus on thoughtful collaboration and meaningful outcomes.</p>
+              <div className="mt-10 grid grid-cols-2 gap-x-5">
+                {cities.map((city, index) => (
+                  <div key={city} className="flex items-center gap-2 border-t border-[#101211]/20 py-4">
+                    <MapPin size={15} />
+                    <span className="text-sm font-semibold">{city}</span>
+                    <span className="ml-auto text-[10px] opacity-50">0{index + 1}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col justify-between rounded-[26px] bg-white p-7 ring-1 ring-neutral-200 sm:p-10 lg:p-12">
+              <div>
+                <p className="h2c-mono text-[10px] text-neutral-500">The #2Code approach</p>
+                <h3 className="h2c-display mt-6 text-4xl leading-[1] sm:text-5xl">Thoughtful by design. Practical by nature.</h3>
+              </div>
+              <div className="mt-12 space-y-4">
+                {["Design that has a reason", "Technology that solves real needs", "Creative work with consistency", "Partnership beyond the launch"].map((item) => (
+                  <div key={item} className="flex items-center gap-3 border-b border-neutral-200 pb-4 text-sm">
+                    <span className="grid h-6 w-6 place-items-center rounded-full bg-[#50DC7D]/25"><Check size={13} /></span>
                     {item}
                   </div>
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* RIGHT — CUSTOM DIGITAL SYSTEMS INTERFACE */}
-            <div className="relative mx-auto w-full max-w-[640px] min-w-0 lg:ml-auto lg:max-w-none">
-              <div className="absolute -right-3 -top-6 hidden h-20 w-20 border-r border-t border-[#50DC7D] sm:block lg:-right-5" />
-
-              <div className="relative overflow-hidden border border-neutral-300 bg-[#101211] text-white shadow-[12px_12px_0_#e8ece9] sm:shadow-[18px_18px_0_#e8ece9]">
-                {/* Window header */}
-                <div className="flex h-12 items-center justify-between border-b border-white/10 px-4 sm:px-5">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#50DC7D]" />
-                    <span className="h2c-mono text-[10px] uppercase tracking-[.15em] text-white/70">
-                      #2CODE / STUDIO
+      {/* FAQ */}
+      <section className="bg-white py-24 sm:py-32">
+        <div className="h2c-wrap grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+          <div>
+            <p className="h2c-kicker">A few useful details</p>
+            <h2 className="h2c-display mt-6 text-5xl leading-[.95] sm:text-7xl">Good to know<span className="text-[#50DC7D]">.</span></h2>
+            <p className="mt-6 max-w-sm text-sm leading-7 text-neutral-500">Have another question? Tell us what you’re planning and we’ll take it from there.</p>
+            <Link to="/contact" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">Talk to our team <ArrowUpRight size={17} /></Link>
+          </div>
+          <div className="border-t border-neutral-300">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div key={faq.q} className={`border-b border-neutral-300 ${isOpen ? "h2c-faq-open" : ""}`}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    aria-expanded={isOpen}
+                    className="flex w-full items-center justify-between gap-5 py-6 text-left"
+                  >
+                    <span className="h2c-display text-xl sm:text-2xl">{faq.q}</span>
+                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border border-neutral-300 transition-all ${isOpen ? "rotate-45 border-[#50DC7D] bg-[#50DC7D]" : ""}`}>
+                      <Plus size={17} />
                     </span>
-                  </div>
-                  <span className="h2c-mono text-[9px] text-white/40">
-                    INTERFACE_001
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-[40px_minmax(0,1fr)] sm:grid-cols-[48px_minmax(0,1fr)]">
-                  {/* Vertical tool rail */}
-                  <div className="flex flex-col items-center gap-6 border-r border-white/10 py-5">
-                    <Command className="h-4 w-4 text-[#50DC7D]" />
-                    <Code2 className="h-4 w-4 text-white/35" />
-                    <Layers3 className="h-4 w-4 text-white/35" />
-                    <Cpu className="h-4 w-4 text-white/35" />
-                    <div className="mt-auto h-6 w-1 bg-[#50DC7D]" />
-                  </div>
-
-                  {/* Dashboard body */}
-                  <div className="min-w-0 p-4 sm:p-6">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="h2c-mono text-[9px] uppercase tracking-[.2em] text-white/40 sm:text-[10px]">
-                          Digital product / Overview
-                        </p>
-                        <h2 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">
-                          Built with intent.
-                        </h2>
-                      </div>
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-[#50DC7D]/40 bg-[#50DC7D]/10">
-                        <Zap className="h-4 w-4 text-[#50DC7D]" />
-                      </div>
-                    </div>
-
-                    {/* Main visual — schematic, not generic gradients */}
-                    <div className="relative mt-6 overflow-hidden border border-white/10 bg-[#171a18] p-4 sm:p-5">
-                      <div className="absolute right-4 top-4 flex items-center gap-2">
-                        <span className="h2c-mono text-[9px] text-white/35">
-                          SCREEN. 01
-                        </span>
-                        <span className="h-1.5 w-1.5 bg-[#50DC7D]" />
-                      </div>
-
-                      <div className="relative z-10 flex min-h-[150px] flex-col justify-between sm:min-h-[175px]">
-                        <div className="h2c-mono text-[10px] leading-5 text-white/45">
-                          <p>01 / DEFINE</p>
-                          <p>02 / ENGINEER</p>
-                          <p>03 / DELIVER</p>
-                        </div>
-
-                        <div className="flex items-end justify-between gap-2">
-                          <div>
-                            <div className="h2c-display text-5xl leading-none tracking-[-.08em] text-white sm:text-7xl">
-                              #<span className="text-[#50DC7D]">2</span>CODE
-                            </div>
-                            <p className="h2c-mono mt-2 text-[9px] uppercase tracking-[.16em] text-white/45">
-                              Ideas / Systems / Impact
-                            </p>
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-1.5 pb-1">
-                            {Array.from({ length: 9 }).map((_, index) => (
-                              <span
-                                key={index}
-                                className={`h-3 w-3 sm:h-4 sm:w-4 ${
-                                  [0, 2, 4, 6, 7].includes(index)
-                                    ? "bg-[#50DC7D]"
-                                    : "border border-white/20"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 opacity-30"
-                        style={{
-                          backgroundImage:
-                            "linear-gradient(to right, #ffffff12 1px, transparent 1px), linear-gradient(to bottom, #ffffff12 1px, transparent 1px)",
-                          backgroundSize: "22px 22px",
-                        }}
-                      />
-                    </div>
-
-                    {/* Three functional-looking system cards */}
-                    <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
-                      {[
-                        {
-                          icon: Globe2,
-                          label: "WEB",
-                          title: "Experiences",
-                        },
-                        {
-                          icon: Smartphone,
-                          label: "APP",
-                          title: "Applications",
-                        },
-                        {
-                          icon: Workflow,
-                          label: "FLOW",
-                          title: "Automation",
-                        },
-                      ].map((item) => (
-                        <div
-                          key={item.label}
-                          className="min-w-0 border border-white/10 bg-white/[0.035] p-2.5 sm:p-3"
-                        >
-                          <item.icon className="h-4 w-4 text-[#50DC7D]" />
-                          <p className="h2c-mono mt-4 text-[8px] tracking-[.12em] text-white/40 sm:text-[9px]">
-                            {item.label}
-                          </p>
-                          <p className="mt-1 break-words text-[10px] font-medium text-white/85 sm:text-xs">
-                            {item.title}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Terminal footer */}
-                    <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-4">
-                      <div className="flex items-center gap-2">
-                        <Terminal className="h-3.5 w-3.5 text-[#50DC7D]" />
-                        <span className="h2c-mono text-[9px] text-white/55 sm:text-[10px]">
-                          Turning concepts into systems
-                        </span>
-                        <span className="h2c-cursor h-3 w-1 bg-[#50DC7D]" />
-                      </div>
-                      <span className="h2c-mono text-[9px] text-white/30">
-                        READY_
-                      </span>
+                  </button>
+                  <div className="h2c-faq-content">
+                    <div>
+                      <p className="max-w-2xl pb-6 pr-12 text-sm leading-7 text-neutral-500">{faq.a}</p>
                     </div>
                   </div>
                 </div>
-
-                {/* Bottom status strip */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/10 bg-[#0c0e0d] px-4 py-3 sm:px-5">
-                  <span className="h2c-mono text-[9px] uppercase tracking-wider text-white/35">
-                    #2CODE Team
-                  </span>
-                  <span className="h2c-mono flex items-center gap-2 text-[9px] text-white/55">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#50DC7D]" />
-                    ENGINEERING THE NEXT STEP
-                  </span>
-                </div>
-              </div>
-
-              {/* Small external annotation */}
-              <div className="mt-7 flex items-center justify-between gap-3 lg:mt-8">
-                <span className="h2c-mono text-[9px] uppercase tracking-[.14em] text-neutral-400 sm:text-[10px]">
-                  Concept → Code → Product
-                </span>
-                <span className="h2c-mono text-[9px] text-neutral-400 sm:text-[10px]">
-                  13° / 77° / BUILD
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Full-width technology strip */}
-          <div className="relative border-t border-neutral-200 py-6 sm:py-7">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
-              <div className="shrink-0">
-                <p className="h2c-mono text-[9px] font-semibold uppercase tracking-[.18em] text-neutral-500 sm:text-[10px]">
-                  Our technology ecosystem
-                </p>
-                <p className="mt-1 text-xs text-neutral-400">
-                  Tools selected for the problem
-                </p>
-              </div>
-
-              <div
-                className="relative min-w-0 flex-1 overflow-hidden"
-                aria-label={`Technologies: ${techStack.join(", ")}`}
-              >
-                <div className="h2c-marquee flex w-max items-center gap-3 hover:[animation-play-state:paused] sm:gap-4">
-                  {[...techStack, ...techStack].map((tech, index) => (
-                    <span
-                      key={`${tech}-${index}`}
-                      aria-hidden={index >= techStack.length}
-                      className="inline-flex h-9 shrink-0 items-center border border-neutral-200 bg-white px-3 h2c-mono text-[10px] text-neutral-600 sm:px-4 sm:text-xs"
-                    >
-                      <span className="mr-2 text-[#28ad55]">/</span>
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* =====================================================
-          SERVICES
-      ====================================================== */}
-      <section
-        id="services"
-        aria-labelledby="services-heading"
-        className="border-b border-neutral-200 bg-[#F8F9FA] py-20 sm:py-24 lg:py-28"
-      >
-        <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
-          <div className="mb-10 grid gap-5 border-b border-neutral-200 pb-8 sm:mb-14 sm:pb-10 lg:grid-cols-[1fr_400px] lg:items-end lg:gap-10 xl:grid-cols-[1fr_460px]">
-            <div>
-              <p className="h2c-mono text-[10px] font-semibold uppercase tracking-[.2em] text-neutral-400">
-                01 / What we engineer
-              </p>
-              <h2
-                id="services-heading"
-                className="h2c-display mt-4 text-4xl leading-[1.02] tracking-[-.06em] sm:text-5xl lg:text-6xl"
-              >
-                Technology with
-                <br className="hidden sm:block" /> a{" "}
-                <span className="text-neutral-400">job to do.</span>
-              </h2>
-            </div>
-
-            <p className="max-w-lg text-sm leading-7 text-neutral-600 sm:text-base sm:leading-8 lg:justify-self-end">
-              We deliver website development, mobile app development, custom
-              software, and workflow automation based on what your business
-              actually needs.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-px overflow-hidden border border-neutral-200 bg-neutral-200 sm:grid-cols-2 xl:grid-cols-4">
-            {services.map((service) => (
-              <article
-                key={service.number}
-                className="group flex min-w-0 flex-col bg-white p-6 transition-colors duration-300 hover:bg-[#f4fff7] sm:p-7 lg:p-8"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center border border-neutral-200 bg-[#F8F9FA] transition-colors group-hover:border-[#50DC7D] group-hover:bg-[#50DC7D]/15">
-                    <service.icon className="h-5 w-5 text-neutral-800" />
-                  </div>
-                  <span className="h2c-mono pt-1 text-[10px] text-neutral-400">
-                    / {service.number}
-                  </span>
-                </div>
-
-                <h3 className="mt-7 text-xl font-semibold leading-snug tracking-tight text-neutral-950 sm:text-[22px]">
-                  {service.title}
-                </h3>
-
-                <p className="mt-3 flex-1 text-sm leading-7 text-neutral-500">
-                  {service.description}
-                </p>
-
-                <div className="mt-6 flex flex-wrap gap-2 border-t border-neutral-100 pt-5">
-                  {service.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="border border-neutral-200 px-2 py-1 h2c-mono text-[9px] text-neutral-500"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <Link
-                  to="/contact"
-                  aria-label={`Discuss ${service.title}`}
-                  className="mt-5 inline-flex items-center justify-between border-t border-neutral-100 pt-4 text-xs font-semibold text-neutral-800"
-                >
-                  Discuss this service
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================
-          APPROACH / WHY #2CODE
-      ====================================================== */}
-      <section
-        aria-labelledby="approach-heading"
-        className="border-b border-neutral-200 bg-white py-20 sm:py-24 lg:py-28"
-      >
-        <div className="mx-auto grid w-full max-w-[1600px] gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,.82fr)_minmax(0,1.18fr)] lg:gap-20 lg:px-12 xl:gap-28 xl:px-16 2xl:px-20">
-          <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
-            <p className="h2c-mono text-[10px] font-semibold uppercase tracking-[.2em] text-neutral-400">
-              02 / Our approach
-            </p>
-
-            <h2
-              id="approach-heading"
-              className="h2c-display mt-5 text-4xl leading-[1.03] tracking-[-.065em] sm:text-5xl lg:text-6xl"
-            >
-              Good ideas
-              <br />
-              deserve
-              <br />
-              <span className="text-neutral-400">good engineering.</span>
-            </h2>
-
-            <p className="mt-6 max-w-lg text-sm leading-7 text-neutral-600 sm:text-base sm:leading-8">
-              #2CODE Team brings product thinking, practical engineering,
-              and thoughtful design together to create digital solutions
-              that serve real people and real business needs.
-            </p>
-
-            <Link
-              to="/about"
-              className="group mt-7 inline-flex items-center gap-3 border-b border-neutral-300 pb-3 text-sm font-semibold hover:border-[#50DC7D]"
-            >
-              Get to know our team
-              <ArrowRight className="h-4 w-4 text-[#24a851] transition-transform group-hover:translate-x-1" />
-            </Link>
-
-            {/* Editorial metrics, without invented claims */}
-            <div className="mt-10 grid grid-cols-2 border-y border-neutral-200">
-              <div className="py-5 pr-4">
-                <Code2 className="h-5 w-5 text-neutral-700" />
-                <p className="mt-3 text-sm font-semibold">Thoughtful code</p>
-                <p className="mt-1 text-xs leading-5 text-neutral-500">
-                  Maintainable by design
-                </p>
-              </div>
-              <div className="border-l border-neutral-200 py-5 pl-4">
-                <Lightbulb className="h-5 w-5 text-neutral-700" />
-                <p className="mt-3 text-sm font-semibold">Useful products</p>
-                <p className="mt-1 text-xs leading-5 text-neutral-500">
-                  Grounded in real needs
-                </p>
-              </div>
+      {/* FINAL CTA */}
+      <section className="px-3 pb-3 sm:px-5 sm:pb-5">
+        <div className="relative mx-auto max-w-[1700px] overflow-hidden rounded-[26px] bg-[#50DC7D] px-6 py-20 text-[#101211] sm:rounded-[34px] sm:px-12 sm:py-28 lg:px-16 lg:py-36">
+          <div className="pointer-events-none absolute -right-24 -top-32 h-[440px] w-[440px] rounded-full border border-[#101211]/10 sm:h-[600px] sm:w-[600px]" />
+          <div className="pointer-events-none absolute -right-8 -top-16 h-[310px] w-[310px] rounded-full border border-[#101211]/10 sm:h-[450px] sm:w-[450px]" />
+          <div className="relative z-[1]">
+            <p className="h2c-mono text-[10px]">Have something in mind?</p>
+            <h2 className="h2c-display mt-7 max-w-5xl text-[clamp(3.1rem,8.5vw,8.5rem)] leading-[.88]">Let’s make<br />something matter<span className="text-white">.</span></h2>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <ActionLink to="/contact">Start a conversation</ActionLink>
+              <ActionLink to="/about" light>Discover #2Code</ActionLink>
             </div>
           </div>
-
-          <div className="min-w-0 border-t border-neutral-200">
-            {principles.map((item) => (
-              <article
-                key={item.number}
-                className="group grid grid-cols-[36px_minmax(0,1fr)_24px] gap-3 border-b border-neutral-200 py-6 transition-colors hover:bg-neutral-50 sm:grid-cols-[48px_minmax(0,1fr)_28px] sm:gap-5 sm:py-8"
-              >
-                <span className="h2c-mono pt-1 text-[10px] text-neutral-400">
-                  {item.number}
-                </span>
-
-                <div className="min-w-0">
-                  <div className="flex items-center gap-3">
-                    <item.icon className="h-4 w-4 shrink-0 text-neutral-500 transition-colors group-hover:text-[#22a851]" />
-                    <h3 className="text-base font-semibold leading-snug tracking-tight sm:text-lg">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-500">
-                    {item.desc}
-                  </p>
-                </div>
-
-                <CheckCircle2 className="mt-1 h-5 w-5 text-neutral-300 transition-colors group-hover:text-[#22a851]" />
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================
-          PROJECT DISCOVERY BAND
-      ====================================================== */}
-      <section className="border-b border-neutral-200 bg-[#F8F9FA] py-16 sm:py-20">
-        <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
-          <div className="grid items-center gap-8 border border-neutral-200 bg-white p-6 sm:p-9 lg:grid-cols-[1fr_auto] lg:gap-12 lg:p-12">
-            <div className="min-w-0">
-              <p className="h2c-mono text-[10px] font-semibold uppercase tracking-[.18em] text-neutral-400">
-                03 / See what is possible
-              </p>
-              <h2 className="h2c-display mt-4 max-w-3xl text-3xl leading-tight tracking-[-.06em] sm:text-4xl lg:text-5xl">
-                From a blank page to a working product.
-              </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-neutral-500 sm:text-base">
-                Explore our projects and discover how web technologies,
-                application development, and practical software solutions can
-                come together.
-              </p>
-            </div>
-
-            <Link to="/projects" className="w-full lg:w-auto">
-              <Button className="group h-12 w-full rounded-none bg-neutral-950 px-6 text-sm text-white hover:bg-neutral-800 lg:w-auto">
-                Explore projects
-                <ArrowRight className="ml-3 h-4 w-4 text-[#50DC7D] transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================
-          FINAL CTA
-      ====================================================== */}
-      <section className="bg-[#F8F9FA] py-16 sm:py-24 lg:py-28">
-        <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
-          <div className="relative isolate overflow-hidden border border-neutral-800 bg-[#101211] px-6 py-12 text-white sm:px-10 sm:py-16 lg:px-16 lg:py-20">
-            {/* Technical corner marks */}
-            <span
-              aria-hidden="true"
-              className="absolute left-0 top-0 h-12 w-12 border-l-2 border-t-2 border-[#50DC7D] sm:h-16 sm:w-16"
-            />
-            <span
-              aria-hidden="true"
-              className="absolute bottom-0 right-0 h-12 w-12 border-b-2 border-r-2 border-[#50DC7D] sm:h-16 sm:w-16"
-            />
-
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute right-0 top-0 hidden h-full w-[36%] border-l border-white/[0.06] lg:block"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, #ffffff0b 1px, transparent 1px), linear-gradient(to bottom, #ffffff0b 1px, transparent 1px)",
-                backgroundSize: "32px 32px",
-              }}
-            />
-
-            <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-12">
-              <div className="min-w-0">
-                <div className="mb-5 inline-flex items-center gap-2 border border-white/15 px-3 py-2">
-                  <span className="h-1.5 w-1.5 bg-[#50DC7D]" />
-                  <span className="h2c-mono text-[9px] uppercase tracking-[.18em] text-white/60 sm:text-[10px]">
-                    Have a project in mind?
-                  </span>
-                </div>
-
-                <h2 className="h2c-display max-w-4xl text-4xl leading-[1.02] tracking-[-.065em] sm:text-5xl lg:text-7xl">
-                  Let's build
-                  <br />
-                  something{" "}
-                  <span className="text-[#50DC7D]">meaningful.</span>
-                </h2>
-
-                <p className="mt-5 max-w-xl text-sm leading-7 text-white/60 sm:text-base sm:leading-8">
-                  Tell us what you are working on. Let's explore the right
-                  website, mobile application, custom software, or automation
-                  solution for your next step.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3 sm:flex-row lg:min-w-[190px] lg:flex-col">
-                <Link to="/contact" className="w-full">
-                  <Button className="group h-12 w-full rounded-none bg-[#50DC7D] px-5 text-sm font-bold text-neutral-950 hover:bg-[#6be891] sm:h-14">
-                    Start a conversation
-                    <ArrowRight className="ml-3 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-
-                <Link
-                  to="/about"
-                  className="inline-flex h-12 items-center justify-center gap-2 border border-white/20 px-5 text-sm font-medium text-white transition-colors hover:border-white/50 sm:h-14"
-                >
-                  About #2CODE
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative z-10 mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
-              <span className="h2c-mono text-[9px] uppercase tracking-[.16em] text-white/35">
-                #2CODE TEAM / DIGITAL ENGINEERING
-              </span>
-              <span className="h2c-mono text-[9px] uppercase tracking-[.16em] text-white/35">
-                IDEAS INTO REALITIES<span className="text-[#50DC7D]">_</span>
-              </span>
-            </div>
+          <div className="relative z-[1] mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-[#101211]/20 pt-5 text-xs text-[#101211]/65">
+            <span>#2Code Studio · Digital, creative & technology</span>
+            <span>Shivamogga · Mangalore · Mysore · Kozhikode</span>
           </div>
         </div>
       </section>

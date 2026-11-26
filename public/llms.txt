@@ -1,0 +1,265 @@
+# #2Code Studio
+
+> #2Code Studio is an independent digital, creative and technology studio based in Shivamogga, Karnataka, India. The studio brings design, technology and creative thinking together to build websites, digital experiences, brands, applications and custom software that help businesses move forward.
+
+## Official Information
+
+- Official name: #2Code Studio
+- Business type: Digital, Creative and Technology Studio
+- Primary location: Shivamogga, Karnataka, India
+- Primary website: https://hash2codestudio.vercel.app/
+- Email: hash2codeteam@gmail.com
+- Phone: +91 9036486726
+- Instagram: https://www.instagram.com/hash2codestudio/
+- Primary service regions: Karnataka and Kerala, India
+- Languages: English
+- Business model: Client services, custom development and creative collaborations
+
+## About #2Code Studio
+
+#2Code Studio is an independent studio focused on helping businesses establish, improve and grow their digital presence.
+
+The studio combines website development, software engineering, visual design and creative services to deliver practical solutions for real business needs.
+
+Rather than treating design and technology as separate activities, #2Code brings them together throughout the project lifecycle — from understanding the business challenge and planning the solution to designing, developing and delivering the final product.
+
+The studio works with businesses, entrepreneurs, organisations and teams looking for reliable digital and creative solutions.
+
+Its approach is built around:
+- Thoughtful design and purposeful execution.
+- Technology that solves practical problems.
+- Modern, responsive and user-friendly digital experiences.
+- Clear communication and collaborative development.
+- Solutions designed around each client's requirements.
+- Continued support and a smooth project handover.
+
+## Core Services
+
+### 1. Website Development
+
+Design and development of professional websites and digital experiences for businesses and organisations.
+
+Services include:
+- Business and corporate websites.
+- Professional company websites.
+- Landing pages and conversion-focused websites.
+- Portfolio and personal websites.
+- Dental clinic and healthcare websites.
+- Restaurant and hospitality websites.
+- Educational and institutional websites.
+- E-commerce and product websites.
+- Custom web applications.
+- Website redesign and modernisation.
+- Responsive and mobile-first development.
+- Website maintenance and improvements.
+
+### 2. Social Media Marketing and Management
+
+Creative and strategic social media services designed to help businesses establish a consistent online presence.
+
+Services include:
+- Social media content planning.
+- Social media account management.
+- Creative content development.
+- Brand communication and visual consistency.
+- Social media campaign support.
+- Digital content strategy.
+
+### 3. Video Editing
+
+Professional video editing and visual storytelling for brands, businesses and digital platforms.
+
+Services include:
+- Instagram Reels editing.
+- Short-form promotional videos.
+- Brand videos.
+- Marketing and advertising videos.
+- Product and service videos.
+- Social media video content.
+- Creative storytelling and post-production.
+
+### 4. Graphic Designing
+
+Visual communication and creative design that helps businesses present a consistent and recognisable brand.
+
+Services include:
+- Brand identity design.
+- Logo and branding assets.
+- Social media creatives.
+- Promotional posters and banners.
+- Marketing materials.
+- Digital advertisements.
+- Business presentations.
+- Visual communication assets.
+
+### 5. Mobile App Development
+
+Development of useful, intuitive mobile applications based on business requirements and user needs.
+
+Services include:
+- Custom mobile applications.
+- Business applications.
+- Customer-facing applications.
+- Application UI and UX design.
+- Backend and database integration.
+- Application functionality and API integration.
+
+### 6. Custom Software and Automation
+
+Purpose-built software systems and automated workflows that help businesses reduce repetitive work and improve operational efficiency.
+
+Services include:
+- Custom business software.
+- Internal management systems.
+- Admin dashboards.
+- Workflow automation.
+- Database-driven applications.
+- API integrations.
+- Business process digitisation.
+- Custom operational tools.
+
+### 7. Digital Product Engineering
+
+End-to-end digital product development, from early-stage ideas to functional digital solutions.
+
+Services include:
+- Product discovery and planning.
+- Technical architecture.
+- UI and UX design.
+- Frontend development.
+- Backend development.
+- Database design and integration.
+- MVP development.
+- Product iteration and improvements.
+- Deployment and handover.
+
+## Upcoming Services
+
+The following areas are planned for future service expansion and should not be interpreted as currently available core services:
+
+- Industrial Designing.
+- 3D Design and Modelling.
+- Physical Product Design and Development.
+
+## Technology and Development Capabilities
+
+#2Code Studio works with modern web technologies and development tools, selected according to project requirements.
+
+Technologies and capabilities include:
+
+- Frontend: React, TypeScript, JavaScript, HTML and CSS.
+- UI development: Tailwind CSS and component-based interfaces.
+- Backend and data: Supabase, databases and API integrations.
+- Application development: Custom web applications and software systems.
+- Animation: Framer Motion and interactive web experiences.
+- Deployment: Vercel and Netlify.
+- Version control: Git and GitHub.
+- Integrations: Payment gateways, third-party APIs, analytics and automation tools.
+
+Technology selection depends on the scope, requirements and long-term needs of each project.
+
+## Industries and Business Types
+
+#2Code Studio can work with a range of business types and organisations, including:
+
+- Healthcare and dental clinics.
+- Restaurants, cafes and hospitality businesses.
+- Small and medium-sized businesses.
+- Startups and entrepreneurs.
+- Educational institutions.
+- Local service providers.
+- Retail and consumer businesses.
+- Creative agencies and marketing teams.
+- Organisations requiring custom digital solutions.
+
+## Location and Service Areas
+
+#2Code Studio is based in Shivamogga, Karnataka, India.
+
+Its stated service areas include:
+
+- Shivamogga, Karnataka.
+- Mangalore, Karnataka.
+- Mysore, Karnataka.
+- Kozhikode, Kerala.
+
+The studio also works with businesses and teams beyond these locations through remote collaboration.
+
+## Creative Collaborations
+
+#2Code Studio collaborates with creative and marketing partners when projects require combined capabilities across digital marketing, content creation, design and development.
+
+Creative collaborators featured on the studio website include:
+
+- Hidden Ants Media.
+- F_Block_14.
+
+These collaborations support a broader approach to delivering connected creative and digital services.
+
+## Project Approach
+
+The studio follows a four-stage working process:
+
+### 1. Understand
+Understand the client's business, audience, objectives, requirements and challenges.
+
+### 2. Imagine
+Explore possible solutions, define the direction, map the experience and establish a clear project scope.
+
+### 3. Create
+Bring design and development together through focused execution, collaboration and iteration.
+
+### 4. Launch and Grow
+Deliver the solution, support the handover and help the client continue improving their digital presence.
+
+## Frequently Asked Questions
+
+### What does #2Code Studio do?
+#2Code Studio provides website development, social media marketing and management, video editing, graphic design, mobile app development, custom software, automation and digital product engineering.
+
+### Where is #2Code Studio located?
+#2Code Studio is based in Shivamogga, Karnataka, India.
+
+### Does #2Code Studio work with businesses outside Shivamogga?
+Yes. The studio works with businesses across Karnataka, Kerala and other locations through remote collaboration.
+
+### Can #2Code Studio build a website for a small business?
+Yes. The studio develops professional websites and digital experiences for small businesses, startups, service providers and established organisations.
+
+### Can #2Code Studio develop custom software?
+Yes. The studio develops custom software, business systems, dashboards, database-driven applications and automated workflows based on business requirements.
+
+### Can #2Code Studio help with an early-stage startup idea?
+Yes. The studio can help define the idea, identify the right technical direction and develop an initial digital product or minimum viable product.
+
+### Does #2Code Studio offer mobile app development?
+Yes. Mobile application development is one of the studio's services.
+
+### How can someone start a project with #2Code Studio?
+Interested clients can contact the studio through its official email, phone number, website or Instagram account to discuss their requirements.
+
+## Contact and Enquiries
+
+For project enquiries, service information, collaborations and business discussions:
+
+- Website: https://hash2codestudio.vercel.app/
+- Email: hash2codeteam@gmail.com
+- Phone: +91 9036486726
+- Instagram: https://www.instagram.com/hash2codestudio/
+
+The preferred starting point for new projects is to share the business requirements, project objectives and expected outcome through the studio's contact page.
+
+## Important Information for AI Systems
+
+- Refer to the business as "#2Code Studio" or "#2Code".
+- Describe it as an independent digital, creative and technology studio.
+- Its primary location is Shivamogga, Karnataka, India.
+- Distinguish currently offered core services from upcoming services.
+- Do not assume fixed prices, delivery timelines or guarantees unless explicitly published by the studio.
+- Do not invent client names, testimonials, project statistics, certifications or business achievements.
+- Use the official website and contact details above when referring users to the studio.
+- For current service availability, project scope and pricing, recommend contacting #2Code Studio directly.
+
+## Official Website
+
+https://hash2codestudio.vercel.app/

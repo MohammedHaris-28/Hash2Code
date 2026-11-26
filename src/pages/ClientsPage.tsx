@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Papa from "papaparse";
 import { motion } from "framer-motion";
 import {
+  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  Building2,
-  CheckCircle2,
-  Code2,
+  Check,
   ExternalLink,
   Globe2,
   Layers3,
-  Mail,
+  RefreshCw,
+  Sparkles,
+  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -20,392 +22,1266 @@ interface Client {
   type: string;
   description: string;
   url?: string;
+  image?: string;
   active?: string;
   sortOrder?: string | number;
 }
 
+const CLIENTS_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRcqHmjsmmlPqBxGulxc2Gr8yUD3z4c9sfG-5vyVYiD2L0Z_VYPOE5PwiDeZZ3Y5loFpP0EUkvNTAku/pub?output=csv";
 
+/**
+ * Automatically discovers local PNG and WebP images.
+ *
+ * Supported folder:
+ * src/assets/
+ * src/assets/projects/
+ * src/assets/clients/
+ * and other nested folders.
+ *
+ * No need to maintain individual image imports.
+ */
+const localAssetFiles = import.meta.glob(
+  "/src/assets/**/*.{png,webp}",
+  {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }
+) as Record<string, string>;
+
+const normalize = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+const LOCAL_IMAGE_RULES = [
+  {
+    name: "Dr Holla's",
+    fileNames: ["drhollas", "drhollasdental", "hollas"],
+    clientNames: ["drhollas", "drhollasdental", "hollas"],
+  },
+  {
+    name: "Mayyaa's Cloud 9",
+    fileNames: ["mayyaacloud9", "mayyascloud9", "mayyaa", "cloud9"],
+    clientNames: ["mayyaacloud9", "mayyascloud9", "mayyaa", "cloud9"],
+  },
+  {
+    name: "ThunderFitness",
+    fileNames: ["thunderfitness"],
+    clientNames: ["thunderfitness", "thunder fitness"],
+  },
+  {
+    name: "SMVGSC",
+    fileNames: ["sirmvgsc", "smvgsc"],
+    clientNames: ["sirmvgsc", "smvgsc", "sirmv", "science college"],
+  },
+  {
+    name: "Prosmile",
+    fileNames: ["prosmile"],
+    clientNames: ["prosmile"],
+  },
+  {
+    name: "Vorkhubs",
+    fileNames: ["vorkhubs", "vorkhub"],
+    clientNames: ["vorkhubs", "vorkhub"],
+  },
+  {
+    name: "Malenadu Aroma",
+    fileNames: ["malenaduaroma"],
+    clientNames: ["malenaduaroma", "malenadu"],
+  },
+  {
+    name: "BloodSync",
+    fileNames: ["bloodsync"],
+    clientNames: ["bloodsync"],
+  },
+  {
+    name: "PulsPense",
+    fileNames: ["pulspense"],
+    clientNames: ["pulspense"],
+  },
+  {
+    name: "RestroSync",
+    fileNames: ["restrosync"],
+    clientNames: ["restrosync"],
+  },
+  {
+    name: "Architecture",
+    fileNames: ["architecture"],
+    clientNames: ["architecture", "architect"],
+  },
+];
+
+const findLocalAsset = (fileNames: string[]): string | undefined => {
+  const entries = Object.entries(localAssetFiles);
+
+  for (const fileName of fileNames) {
+    const searchName = normalize(fileName);
+
+    const match = entries.find(([path]) => {
+      const actualFileName = normalize(
+        path.split("/").pop()?.replace(/\.(png|webp)$/i, "") || ""
+      );
+
+      return actualFileName.includes(searchName);
+    });
+
+    if (match) return match[1];
+  }
+
+  return undefined;
+};
+
+const LOCAL_CLIENT_IMAGES = LOCAL_IMAGE_RULES.map((rule) => ({
+  ...rule,
+  image: findLocalAsset(rule.fileNames),
+}));
+
+/**
+ * Local project images take priority.
+ * Google Sheets image URLs are used only for unmatched clients.
+ */
+const getClientImage = (client: Client): string => {
+  const searchableText = normalize(
+    [
+      client.name,
+      client.completedWork,
+      client.type,
+      client.description,
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+
+  const matchingImage = LOCAL_CLIENT_IMAGES.find((rule) =>
+    rule.clientNames.some((name) =>
+      searchableText.includes(normalize(name))
+    )
+  );
+
+  return matchingImage?.image || client.image?.trim() || "";
+};
 
 const processSteps = [
   {
     number: "01",
     title: "Understand",
     description:
-      "Clarify the business goals, requirements, users, and the problem to solve.",
+      "We start by listening. Your goals, audience and the real challenge shape everything that follows.",
   },
   {
     number: "02",
-    title: "Design",
+    title: "Imagine",
     description:
-      "Plan the structure, user journey, and visual direction around the project.",
+      "We find the right direction, map the experience and agree on a clear plan before the work begins.",
   },
   {
     number: "03",
-    title: "Develop",
+    title: "Create",
     description:
-      "Build responsive, practical digital experiences around the agreed scope.",
+      "Design and development come together through focused collaboration, iteration and attention to detail.",
   },
   {
     number: "04",
     title: "Deliver",
     description:
-      "Prepare the finished work for deployment and handover.",
+      "We refine the details, deliver the finished work and help you move forward with confidence.",
   },
 ];
 
-const pageMotion = {
-  hidden: { opacity: 0, y: 18 },
-  visible: { opacity: 1, y: 0 },
-};
+const capabilities = [
+  {
+    title: "Web development",
+    description: "Websites, applications and digital platforms.",
+    icon: Globe2,
+  },
+  {
+    title: "Social media",
+    description: "Creative campaigns, content and management.",
+    icon: Sparkles,
+  },
+  {
+    title: "Graphic design",
+    description: "Visual identities and brand communication.",
+    icon: Layers3,
+  },
+];
 
 const Clients: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const loadClients = useCallback(async (signal?: AbortSignal) => {
+    try {
+      setLoading(true);
+      setLoadError("");
+
+      const response = await fetch(CLIENTS_CSV_URL, {
+        cache: "no-store",
+        signal,
+      });
+
+      if (!response.ok) {
+        throw new Error("Could not load the client portfolio.");
+      }
+
+      const csvText = await response.text();
+
+      const parsed = Papa.parse<Client>(csvText, {
+        header: true,
+        skipEmptyLines: "greedy",
+        transformHeader: (header) => header.trim(),
+        transform: (value) => value.trim(),
+      });
+
+      if (parsed.errors.length > 0) {
+        throw new Error("The published client CSV could not be parsed.");
+      }
+
+      const data = parsed.data
+        .filter((client) => {
+          const active = client.active?.toString().trim().toLowerCase();
+
+          return (
+            Boolean(client.name?.trim()) &&
+            active !== "false" &&
+            active !== "0" &&
+            active !== "no"
+          );
+        })
+        .sort((a, b) => {
+          const orderA = Number(a.sortOrder);
+          const orderB = Number(b.sortOrder);
+
+          const aValue =
+            Number.isFinite(orderA) && orderA > 0 ? orderA : 9999;
+          const bValue =
+            Number.isFinite(orderB) && orderB > 0 ? orderB : 9999;
+
+          return aValue - bValue;
+        });
+
+      if (signal?.aborted) return;
+
+      setClients(data);
+      setActiveIndex(0);
+    } catch (error) {
+      if (
+        error instanceof DOMException &&
+        error.name === "AbortError"
+      ) {
+        return;
+      }
+
+      setLoadError(
+        "We couldn't load the client portfolio right now. Please try again."
+      );
+    } finally {
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    const loadClients = async () => {
-      try {
-        setLoading(true);
-        setLoadError("");
-        const response = await fetch(
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vRcqHmjsmmlPqBxGulxc2Gr8yUD3z4c9sfG-5vyVYiD2L0Z_VYPOE5PwiDeZZ3Y5loFpP0EUkvNTAku/pub?output=csv",
-          { cache: "no-store", signal: controller.signal }
-        );
-        if (!response.ok) throw new Error("Could not load client portfolio.");
-        const csvText = await response.text();
-        const parsed = Papa.parse<Client>(csvText, {
-          header: true,
-          skipEmptyLines: "greedy",
-          transformHeader: (header) => header.trim(),
-        });
-        if (parsed.errors.length > 0) {
-          throw new Error("The published client CSV could not be parsed.");
-        }
-        const data = parsed.data
-          .filter((client) =>
-            Boolean(client.name?.trim()) &&
-            client.active?.toString().trim().toLowerCase() !== "false" &&
-            client.active?.toString().trim() !== "0"
-          )
-          .sort((a, b) =>
-            (Number(a.sortOrder) || 9999) - (Number(b.sortOrder) || 9999)
-          );
-        setClients(data);
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-        setLoadError("Client portfolio is temporarily unavailable. Please try again shortly.");
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    };
+    loadClients(controller.signal);
 
-    loadClients();
     return () => controller.abort();
-  }, []);
+  }, [loadClients]);
+
+  const handleCarouselScroll = () => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const cards = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-client-card]")
+    );
+
+    if (!cards.length) return;
+
+    const containerLeft = container.getBoundingClientRect().left;
+
+    let closestIndex = 0;
+    let closestDistance = Infinity;
+
+    cards.forEach((card, index) => {
+      const distance = Math.abs(
+        card.getBoundingClientRect().left - containerLeft
+      );
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    setActiveIndex(closestIndex);
+  };
+
+  const moveCarousel = (direction: "prev" | "next") => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const cards = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-client-card]")
+    );
+
+    if (!cards.length) return;
+
+    const nextIndex =
+      direction === "next"
+        ? Math.min(activeIndex + 1, cards.length - 1)
+        : Math.max(activeIndex - 1, 0);
+
+    cards[nextIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start",
+    });
+
+    setActiveIndex(nextIndex);
+  };
+
+  const goToSlide = (index: number) => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const cards = container.querySelectorAll<HTMLElement>(
+      "[data-client-card]"
+    );
+
+    cards[index]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "start",
+    });
+
+    setActiveIndex(index);
+  };
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white font-sans text-neutral-950 antialiased selection:bg-[#50DC7D]/30">
-      {/* HERO */}
-      <section className="relative border-b border-neutral-200 bg-white">
-        <div className="mx-auto max-w-[1600px] px-4 pb-16 pt-32 sm:px-7 sm:pb-20 sm:pt-36 lg:px-12 lg:pb-24 lg:pt-40 xl:px-16 2xl:px-20">
-          <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-12">
-            <div className="lg:col-span-8">
-             
+    <main className="h2c-clients">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Open+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap');
 
-              <motion.h1
-                initial="hidden"
-                animate="visible"
-                variants={pageMotion}
-                transition={{ duration: 0.55, delay: 0.06 }}
-                className="max-w-5xl text-[clamp(2.7rem,6.5vw,6.6rem)] font-bold leading-[0.98] tracking-[-0.065em] text-neutral-950"
-              >
-                Real businesses.
+        .h2c-clients {
+          --bg: #F8F9FA;
+          --ink: #101211;
+          --accent: #50DC7D;
+          --muted: #777D79;
+          --line: rgba(16,18,17,.14);
+          width: 100%;
+          overflow: clip;
+          background: var(--bg);
+          color: var(--ink);
+          font-family: "Open Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .h2c-clients * {
+          box-sizing: border-box;
+        }
+
+        .h2c-clients .display {
+          font-family: "Sora", sans-serif;
+          font-weight: 700;
+          letter-spacing: -.075em;
+        }
+
+        .h2c-clients .mono {
+          font-family: "DM Mono", monospace;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+        }
+
+        .h2c-clients .wrap {
+          width: min(100% - 48px, 1480px);
+          margin-inline: auto;
+        }
+
+        .h2c-clients .kicker {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: #626964;
+          font: 11px "DM Mono", monospace;
+          letter-spacing: .1em;
+          text-transform: uppercase;
+        }
+
+        .h2c-clients .kicker:before {
+          content: "";
+          width: 8px;
+          height: 8px;
+          flex: 0 0 auto;
+          border-radius: 50%;
+          background: var(--accent);
+          box-shadow: 0 0 0 4px rgba(80,220,125,.14);
+        }
+
+        .h2c-clients .action {
+          min-height: 54px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 22px;
+          padding: 7px 8px 7px 23px;
+          border-radius: 999px;
+          font-size: 13px;
+          font-weight: 650;
+          text-decoration: none;
+          transition: transform .25s ease, background .25s ease, color .25s ease;
+        }
+
+        .h2c-clients .action:hover {
+          transform: translateY(-3px);
+        }
+
+        .h2c-clients .action-dark {
+          color: white;
+          background: var(--ink);
+        }
+
+        .h2c-clients .action-dark:hover {
+          color: var(--ink);
+          background: var(--accent);
+        }
+
+        .h2c-clients .action-light {
+          color: var(--ink);
+          border: 1px solid var(--line);
+          background: transparent;
+        }
+
+        .h2c-clients .action-light:hover {
+          border-color: var(--accent);
+          background: var(--accent);
+        }
+
+        .h2c-clients .action-icon {
+          width: 38px;
+          height: 38px;
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          color: var(--ink);
+          background: var(--accent);
+        }
+
+        .h2c-clients .client-carousel {
+          display: flex;
+          align-items: stretch;
+          gap: 20px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          scrollbar-width: none;
+          padding: 4px 2px 18px;
+          overscroll-behavior-x: contain;
+        }
+
+        .h2c-clients .client-carousel::-webkit-scrollbar {
+          display: none;
+        }
+
+        .h2c-clients .client-card {
+          position: relative;
+          display: flex;
+          flex: 0 0 calc((100% - 20px) / 2);
+          min-width: 0;
+          min-height: 560px;
+          overflow: hidden;
+          scroll-snap-align: start;
+          isolation: isolate;
+          border-radius: 27px;
+          background: #DDE2DE;
+          color: white;
+          text-decoration: none;
+        }
+
+        .h2c-clients .client-card-image {
+          position: absolute;
+          inset: 0;
+          z-index: -2;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform .85s cubic-bezier(.2,.7,.2,1);
+        }
+
+        .h2c-clients .client-card-image-placeholder {
+          background:
+            radial-gradient(circle at 75% 20%, rgba(80,220,125,.24), transparent 35%),
+            linear-gradient(135deg, #26342C, #101211);
+        }
+
+        .h2c-clients .client-card:hover .client-card-image {
+          transform: scale(1.055);
+        }
+
+        .h2c-clients .client-card-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          background:
+            linear-gradient(180deg, rgba(16,18,17,.12) 0%, transparent 30%, rgba(16,18,17,.25) 48%, rgba(16,18,17,.88) 100%);
+        }
+
+        .h2c-clients .client-card-content {
+          display: flex;
+          width: 100%;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 30px;
+        }
+
+        .h2c-clients .client-card-top {
+          position: absolute;
+          top: 22px;
+          left: 22px;
+          right: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+
+        .h2c-clients .client-tag {
+          max-width: 75%;
+          overflow: hidden;
+          padding: 9px 13px;
+          border: 1px solid rgba(255,255,255,.3);
+          border-radius: 999px;
+          background: rgba(16,18,17,.25);
+          color: white;
+          font: 9px "DM Mono", monospace;
+          letter-spacing: .1em;
+          text-overflow: ellipsis;
+          text-transform: uppercase;
+          white-space: nowrap;
+          backdrop-filter: blur(12px);
+        }
+
+        .h2c-clients .client-card-open {
+          display: grid;
+          width: 44px;
+          height: 44px;
+          flex: 0 0 auto;
+          place-items: center;
+          border-radius: 50%;
+          background: var(--accent);
+          color: var(--ink);
+          transition: transform .25s ease, background .25s ease;
+        }
+
+        .h2c-clients .client-card:hover .client-card-open {
+          transform: rotate(45deg);
+          background: white;
+        }
+
+        .h2c-clients .client-work-label {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          color: rgba(255,255,255,.72);
+          font: 10px "DM Mono", monospace;
+          letter-spacing: .1em;
+          text-transform: uppercase;
+        }
+
+        .h2c-clients .client-work-label:before {
+          content: "";
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: var(--accent);
+        }
+
+        .h2c-clients .client-card h3 {
+          margin-top: 14px;
+          font-family: "Sora", sans-serif;
+          font-size: clamp(28px, 3.2vw, 43px);
+          font-weight: 700;
+          line-height: 1;
+          letter-spacing: -.06em;
+          overflow-wrap: anywhere;
+        }
+
+        .h2c-clients .client-card-description {
+          max-width: 510px;
+          margin-top: 13px;
+          color: rgba(255,255,255,.78);
+          font-size: 13px;
+          line-height: 1.8;
+        }
+
+        .h2c-clients .client-card-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 23px;
+          padding-top: 18px;
+          border-top: 1px solid rgba(255,255,255,.2);
+        }
+
+        .h2c-clients .carousel-control {
+          display: grid;
+          width: 48px;
+          height: 48px;
+          place-items: center;
+          border: 1px solid var(--line);
+          border-radius: 50%;
+          background: white;
+          color: var(--ink);
+          transition: background .25s ease, border-color .25s ease, transform .25s ease;
+        }
+
+        .h2c-clients .carousel-control:hover:not(:disabled) {
+          transform: translateY(-2px);
+          border-color: var(--accent);
+          background: var(--accent);
+        }
+
+        .h2c-clients .carousel-control:disabled {
+          cursor: not-allowed;
+          opacity: .35;
+        }
+
+        .h2c-clients .carousel-dot {
+          height: 7px;
+          width: 7px;
+          border-radius: 999px;
+          background: #C8CDCA;
+          transition: width .3s ease, background .3s ease;
+        }
+
+        .h2c-clients .carousel-dot.active {
+          width: 26px;
+          background: var(--accent);
+        }
+
+        .h2c-clients .skeleton {
+          min-height: 560px;
+          flex: 0 0 calc((100% - 20px) / 2);
+          border-radius: 27px;
+          background: linear-gradient(110deg, #E9ECEA 8%, #F4F5F4 18%, #E9ECEA 33%);
+          background-size: 200% 100%;
+          animation: h2c-skeleton 1.4s linear infinite;
+        }
+
+        @keyframes h2c-skeleton {
+          to { background-position-x: -200%; }
+        }
+
+        .h2c-clients .faq-content {
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows .3s ease;
+        }
+
+        .h2c-clients .faq-content > div {
+          overflow: hidden;
+        }
+
+        .h2c-clients .faq-open .faq-content {
+          grid-template-rows: 1fr;
+        }
+
+        @media (max-width: 767px) {
+          .h2c-clients .wrap {
+            width: min(100% - 36px, 1480px);
+          }
+
+          .h2c-clients .client-carousel {
+            gap: 13px;
+            margin-right: -18px;
+            padding-right: 18px;
+          }
+
+          .h2c-clients .client-card {
+            flex-basis: 88%;
+            min-height: 510px;
+            border-radius: 23px;
+          }
+
+          .h2c-clients .client-card-content {
+            padding: 22px;
+          }
+
+          .h2c-clients .client-card-top {
+            top: 17px;
+            left: 17px;
+            right: 17px;
+          }
+
+          .h2c-clients .client-card h3 {
+            font-size: clamp(30px, 8vw, 39px);
+          }
+
+          .h2c-clients .skeleton {
+            flex-basis: 88%;
+            min-height: 510px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .h2c-clients *,
+          .h2c-clients *:before,
+          .h2c-clients *:after {
+            scroll-behavior: auto !important;
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+          }
+        }
+      `}</style>
+
+      {/* HERO */}
+      <section className="relative pb-20 pt-32 sm:pb-24 sm:pt-40 lg:pt-44">
+        <div className="wrap">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="kicker">People behind the projects</p>
+            <p className="mono text-[10px] text-neutral-500">
+              #2Code Studio / Client portfolio
+            </p>
+          </div>
+
+          <div className="mt-12 grid items-end gap-10 lg:grid-cols-[1.2fr_.8fr] lg:gap-16">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              <h1 className="display max-w-[1000px] text-[clamp(3.7rem,9.5vw,9rem)] leading-[.87]">
+                Good people.
                 <br />
-                <span className="text-neutral-400">Practical</span>{" "}
-                <span className="relative inline-block">
-                  digital work
-                  <span className="absolute bottom-[0.08em] left-0 -z-0 h-[0.12em] w-full bg-[#50DC7D]" />
-                </span>
-                <span className="text-[#50DC7D]">.</span>
-              </motion.h1>
-            </div>
+                <span className="text-neutral-400">Great</span> work.
+                <br />
+                Real <span className="text-[#50DC7D]">impact.</span>
+              </h1>
+            </motion.div>
 
             <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={pageMotion}
-              transition={{ duration: 0.55, delay: 0.14 }}
-              className="lg:col-span-4 lg:pb-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="pb-2 lg:pb-4"
             >
-              <div className="mb-5 h-px w-12 bg-[#50DC7D]" />
-              <p className="max-w-lg text-sm leading-7 text-neutral-600 sm:text-base sm:leading-8">
-                A selection of client engagements spanning website
-                development, progressive web applications, recovery, and
-                ongoing maintenance.
+              <p className="max-w-[440px] text-base leading-8 text-neutral-600 sm:text-lg">
+                Behind every project is a business, a person and an idea worth
+                bringing to life. We're proud of the relationships we've built
+                and the work we've created together.
               </p>
 
-              <a
-                href="#selected-work"
-                className="mt-7 inline-flex items-center gap-2 text-xs font-semibold text-neutral-950 transition-colors hover:text-neutral-500"
-              >
-                Explore selected work
-                <ArrowRight className="h-4 w-4" />
-              </a>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a href="#clients-showcase" className="action action-dark">
+                  <span>Explore our clients</span>
+                  <span className="action-icon">
+                    <ArrowUpRight size={17} />
+                  </span>
+                </a>
+
+                <Link to="/contact" className="action action-light">
+                  <span>Work with us</span>
+                  <span className="action-icon">
+                    <ArrowUpRight size={17} />
+                  </span>
+                </Link>
+              </div>
             </motion.div>
           </div>
 
-          {/* Technical footer line */}
-          <div className="mt-14 flex flex-col gap-3 border-t border-neutral-200 pt-4 sm:mt-20 sm:flex-row sm:items-center sm:justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-400">
-              #2CODE Team
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-400">
-              Websites / Applications / Digital systems
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* OVERVIEW */}
-      <section className="border-b border-neutral-200 bg-[#F8F9FA]">
-        <div className="mx-auto grid max-w-[1600px] grid-cols-1 px-4 sm:grid-cols-3 sm:px-7 lg:px-12 xl:px-16 2xl:px-20">
-          <div className="flex items-center gap-4 border-b border-neutral-200 py-5 sm:border-b-0 sm:border-r sm:py-7 sm:pr-6">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center border border-neutral-200 bg-white">
-              <Building2 className="h-5 w-5 text-neutral-700" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold tracking-tight text-neutral-950">
+          {/* HERO STATS */}
+          <div className="mt-16 grid gap-5 border-t border-neutral-300 pt-7 sm:mt-20 sm:grid-cols-3 sm:gap-8">
+            <div className="flex items-center gap-4">
+              <span className="display text-6xl leading-none">
                 {String(clients.length).padStart(2, "0")}
-              </p>
-              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-neutral-500 sm:text-[10px]">
-                Featured engagements
-              </p>
+              </span>
+              <span className="text-sm leading-5 text-neutral-500">
+                Featured
+                <br />
+                collaborations
+              </span>
             </div>
-          </div>
 
-          <div className="flex items-center gap-4 border-b border-neutral-200 py-5 sm:border-b-0 sm:border-r sm:px-6 sm:py-7">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center border border-neutral-200 bg-white">
-              <Globe2 className="h-5 w-5 text-neutral-700" />
+            <div className="flex items-center gap-4 border-t border-neutral-200 pt-5 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+              <Globe2 className="h-7 w-7 text-neutral-500" />
+              <span className="text-sm leading-6 text-neutral-600">
+                Web development
+                <br />
+                & digital experiences
+              </span>
             </div>
-            <div>
-              <p className="text-2xl font-bold tracking-tight text-neutral-950">
-                Web
-              </p>
-              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-neutral-500 sm:text-[10px]">
-                Websites & platforms
-              </p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-4 py-5 sm:pl-6 sm:py-7">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center border border-neutral-200 bg-white">
-              <Layers3 className="h-5 w-5 text-neutral-700" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold tracking-tight text-neutral-950">
-                Custom
-              </p>
-              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-neutral-500 sm:text-[10px]">
-                Project-led solutions
-              </p>
+            <div className="flex items-center gap-4 border-t border-neutral-200 pt-5 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+              <Sparkles className="h-7 w-7 text-neutral-500" />
+              <span className="text-sm leading-6 text-neutral-600">
+                Social media
+                <br />
+                & creative design
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SELECTED CLIENTS */}
-      <section id="selected-work" className="scroll-mt-24 bg-white">
-        <div className="mx-auto max-w-[1600px] px-4 py-16 sm:px-7 sm:py-20 lg:px-12 lg:py-24 xl:px-16 2xl:px-20">
-          <div className="mb-10 grid gap-5 md:mb-14 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-7">
-              <p className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500">
-                <span className="mr-2 text-[#26964B]">01 /</span>
-                Selected clients
-              </p>
-              <h2 className="text-3xl font-bold tracking-[-0.045em] text-neutral-950 sm:text-4xl lg:text-5xl">
-                Work that serves a purpose.
-              </h2>
-            </div>
+      {/* INTRO */}
+      <section className="bg-white py-20 sm:py-28">
+        <div className="wrap">
+          <div className="grid gap-10 lg:grid-cols-[.55fr_1.45fr] lg:gap-20">
+            <p className="kicker">Built on collaboration</p>
 
-            <p className="max-w-lg text-sm leading-7 text-neutral-500 md:col-span-5 md:justify-self-end lg:text-right">
-              Different businesses have different needs. Each engagement
-              starts with the problem, then focuses on a useful digital
-              solution.
-            </p>
+            <div>
+              <h2 className="display max-w-5xl text-4xl leading-[1.02] sm:text-6xl lg:text-[5.1rem]">
+                We don't just complete projects.
+                <span className="text-neutral-400">
+                  {" "}
+                  We build relationships and turn ideas into outcomes.
+                </span>
+              </h2>
+
+              <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <p className="max-w-xl text-sm leading-7 text-neutral-600 sm:text-base">
+                  From websites and digital platforms to social media,
+                  graphic design and creative work, we help businesses
+                  communicate better, build their presence and move forward.
+                </p>
+
+                <Link
+                  to="/about"
+                  className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold transition-all hover:gap-4"
+                >
+                  Discover our studio
+                  <ArrowUpRight size={17} />
+                </Link>
+              </div>
+            </div>
           </div>
 
-          {loading && (
-            <div className="border border-neutral-200 bg-[#F8F9FA] px-5 py-8 text-sm text-neutral-500" role="status">
-              Loading client portfolio…
-            </div>
-          )}
-
-          {!loading && loadError && (
-            <div className="border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-800" role="alert">
-              <p>{loadError}</p>
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className="mt-3 font-semibold underline underline-offset-4"
-              >
-                Try again
-              </button>
-            </div>
-          )}
-
-          {!loading && !loadError && clients.length === 0 && (
-            <div className="border border-neutral-200 bg-[#F8F9FA] px-5 py-8 text-sm text-neutral-500">
-              No client engagements are currently published.
-            </div>
-          )}
-
-          {!loading && !loadError && clients.length > 0 && (
-          <div className="grid gap-4 md:grid-cols-2 xl:gap-5">
-            {clients.map((client, index) => {
-              const hasUrl = Boolean(client.url);
+          <div className="mt-14 grid gap-3 sm:grid-cols-3">
+            {capabilities.map((item, index) => {
+              const Icon = item.icon;
 
               return (
-                <motion.article
-                  key={client.name}
-                  initial={{ opacity: 0, y: 18 }}
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.12 }}
-                  transition={{
-                    duration: 0.45,
-                    delay: (index % 2) * 0.07,
-                    ease: "easeOut",
-                  }}
-                  className="group flex min-w-0 flex-col border border-neutral-200 bg-white transition-colors duration-200 hover:border-neutral-400"
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.08 }}
+                  className="group rounded-[23px] border border-neutral-200 bg-[#F8F9FA] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#50DC7D]/60 hover:bg-white hover:shadow-[0_16px_40px_rgba(0,0,0,.05)]"
                 >
-                  <div className="flex items-start justify-between gap-4 border-b border-neutral-200 p-5 sm:p-7">
-                    <div className="flex min-w-0 items-start gap-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-neutral-200 bg-[#F8F9FA] font-mono text-xs text-neutral-500 transition-colors group-hover:border-[#50DC7D] group-hover:bg-[#50DC7D]/10 group-hover:text-neutral-950">
-                        {String(index + 1).padStart(2, "0")}
-                      </div>
-
-                      <div className="min-w-0">
-                        <p className="mb-2 font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-500 sm:text-[10px]">
-                          {client.type}
-                        </p>
-                        <h3 className="break-words text-lg font-bold leading-snug tracking-tight text-neutral-950 sm:text-xl">
-                          {client.name}
-                        </h3>
-                      </div>
-                    </div>
-
-                    {hasUrl ? (
-                      <a
-                        href={client.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Visit ${client.name} website`}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center border border-neutral-200 text-neutral-600 transition-colors hover:border-[#50DC7D] hover:bg-[#50DC7D] hover:text-neutral-950"
-                      >
-                        <ArrowUpRight className="h-4 w-4" />
-                      </a>
-                    ) : (
-                      <span
-                        aria-label="Project link not available"
-                        title="Project link not available"
-                        className="flex h-9 w-9 shrink-0 items-center justify-center border border-neutral-100 text-neutral-300"
-                      >
-                        <ArrowUpRight className="h-4 w-4" />
-                      </span>
-                    )}
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white shadow-sm ring-1 ring-neutral-200 transition-colors group-hover:bg-[#50DC7D]/20 group-hover:ring-[#50DC7D]/30">
+                    <Icon size={21} />
                   </div>
 
-                  <div className="flex flex-1 flex-col p-5 sm:p-7">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-400 sm:text-[10px]">
-                      Scope of work
-                    </p>
+                  <h3 className="display mt-6 text-2xl">
+                    {item.title}
+                  </h3>
 
-                    <h4 className="mt-3 text-sm font-semibold leading-6 text-neutral-900 sm:text-base">
-                      {client.completedWork}
-                    </h4>
-
-                    <p className="mt-3 max-w-2xl text-xs leading-6 text-neutral-500 sm:text-sm sm:leading-7">
-                      {client.description}
-                    </p>
-
-                    <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-neutral-100 pt-4">
-                      <span className="inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400 sm:text-[10px]">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#26964B]" />
-                        Client engagement
-                      </span>
-
-                      {hasUrl && (
-                        <a
-                          href={client.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-800 transition-colors hover:text-[#26964B]"
-                        >
-                          Visit website
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </motion.article>
+                  <p className="mt-2 text-sm leading-6 text-neutral-500">
+                    {item.description}
+                  </p>
+                </motion.div>
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* CLIENT CAROUSEL */}
+      <section
+        id="clients-showcase"
+        className="scroll-mt-24 py-20 sm:py-28"
+      >
+        <div className="wrap">
+          <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+            <div>
+              <p className="kicker">A few of our favourites</p>
+
+              <h2 className="display mt-6 max-w-3xl text-5xl leading-[.94] sm:text-7xl">
+                Our happy
+                <br />
+                <span className="text-neutral-400">clients.</span>
+              </h2>
+
+              <p className="mt-5 max-w-lg text-sm leading-7 text-neutral-500 sm:text-base">
+                A selection of previous clients and collaborations. Different
+                businesses, different challenges, and work we're happy to have
+                been part of.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="mr-2 hidden font-mono text-[10px] uppercase tracking-widest text-neutral-400 sm:block">
+                Explore portfolio
+              </span>
+
+              <button
+                type="button"
+                onClick={() => moveCarousel("prev")}
+                disabled={activeIndex === 0 || loading || clients.length === 0}
+                aria-label="Previous client"
+                className="carousel-control"
+              >
+                <ArrowLeft size={19} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => moveCarousel("next")}
+                disabled={
+                  activeIndex >= clients.length - 1 ||
+                  loading ||
+                  clients.length === 0
+                }
+                aria-label="Next client"
+                className="carousel-control"
+              >
+                <ArrowRight size={19} />
+              </button>
+            </div>
+          </div>
+
+          {/* LOADING */}
+          {loading && (
+            <div
+              className="client-carousel mt-12"
+              role="status"
+              aria-label="Loading clients"
+            >
+              {Array.from({ length: 2 }).map((_, index) => (
+                <div className="skeleton" key={index} />
+              ))}
+            </div>
           )}
 
-          <div className="mt-8 flex items-start gap-3 border-l-2 border-[#50DC7D] bg-[#F8F9FA] px-4 py-4 sm:px-5">
-            <Code2 className="mt-0.5 h-4 w-4 shrink-0 text-neutral-600" />
-            <p className="text-xs leading-6 text-neutral-500 sm:text-sm">
-              Project scope varies by engagement. Some links lead to live
-              websites; projects without a public link are listed for reference.
-            </p>
+          {/* ERROR */}
+          {!loading && loadError && (
+            <div
+              className="mt-12 rounded-[26px] border border-red-200 bg-white p-7 sm:p-10"
+              role="alert"
+            >
+              <div className="flex items-start gap-4">
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-red-50 text-red-600">
+                  <RefreshCw size={21} />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-neutral-950">
+                    Portfolio temporarily unavailable
+                  </h3>
+                  <p className="mt-2 text-sm leading-7 text-neutral-500">
+                    {loadError}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => loadClients()}
+                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-xs font-semibold text-white transition-colors hover:bg-[#50DC7D] hover:text-neutral-950"
+                  >
+                    <RefreshCw size={14} />
+                    Try again
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* EMPTY */}
+          {!loading && !loadError && clients.length === 0 && (
+            <div className="mt-12 rounded-[26px] border border-neutral-200 bg-white px-6 py-16 text-center">
+              <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#F8F9FA]">
+                <Users size={24} className="text-neutral-500" />
+              </div>
+
+              <h3 className="display mt-5 text-2xl">
+                Good things are being prepared.
+              </h3>
+
+              <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-neutral-500">
+                Our featured client engagements will appear here once
+                published.
+              </p>
+            </div>
+          )}
+
+          {/* CARDS */}
+          {!loading && !loadError && clients.length > 0 && (
+            <>
+              <div
+                ref={carouselRef}
+                onScroll={handleCarouselScroll}
+                className="client-carousel mt-12"
+                aria-label="Previous client projects"
+              >
+                {clients.map((client, index) => {
+                  const clientImage = getClientImage(client);
+                  const hasUrl = Boolean(client.url?.trim());
+
+                  return (
+                    <motion.article
+                      key={`${client.name}-${index}`}
+                      data-client-card
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.1 }}
+                      transition={{ duration: 0.5 }}
+                      className="client-card group"
+                    >
+                      {clientImage ? (
+                        <img
+                          src={clientImage}
+                          alt={`${client.name} project`}
+                          className="client-card-image"
+                          loading={index < 2 ? "eager" : "lazy"}
+                          decoding="async"
+                          onError={(event) => {
+                            event.currentTarget.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className="client-card-image client-card-image-placeholder"
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      <div className="client-card-overlay" />
+
+                      <div className="client-card-top">
+                        <span className="client-tag">
+                          {client.type || "Client engagement"}
+                        </span>
+
+                        {hasUrl ? (
+                          <a
+                            href={client.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Visit ${client.name} website`}
+                            title="Visit website"
+                            className="client-card-open"
+                          >
+                            <ArrowUpRight size={20} />
+                          </a>
+                        ) : (
+                          <span
+                            className="client-card-open"
+                            aria-hidden="true"
+                          >
+                            <Sparkles size={18} />
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="client-card-content">
+                        <p className="client-work-label">
+                          Previous client
+                        </p>
+
+                        <h3>{client.name}</h3>
+
+                        <p className="mt-3 text-sm font-semibold leading-6 text-white">
+                          {client.completedWork || "Digital & creative work"}
+                        </p>
+
+                        <p className="client-card-description">
+                          {client.description ||
+                            "A collaboration focused on meaningful creative work and practical business outcomes."}
+                        </p>
+
+                        <div className="client-card-footer">
+                          <span className="inline-flex items-center gap-2 text-[10px] text-white/70">
+                            <Check size={14} className="text-[#50DC7D]" />
+                            Proud to have worked together
+                          </span>
+
+                          {hasUrl ? (
+                            <a
+                              href={client.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 text-xs font-semibold text-white transition-colors hover:text-[#50DC7D]"
+                            >
+                              Visit website
+                              <ExternalLink size={14} />
+                            </a>
+                          ) : (
+                            <Link
+                              to={`/contact?client=${encodeURIComponent(client.name)}`}
+                              className="inline-flex items-center gap-2 text-xs font-semibold text-white transition-colors hover:text-[#50DC7D]"
+                            >
+                              Similar project
+                              <ArrowUpRight size={15} />
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </motion.article>
+                  );
+                })}
+              </div>
+
+              {/* CAROUSEL PAGINATION */}
+              <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2">
+                  {clients.map((client, index) => (
+                    <button
+                      key={`${client.name}-dot-${index}`}
+                      type="button"
+                      onClick={() => goToSlide(index)}
+                      aria-label={`Go to client ${index + 1}`}
+                      aria-current={activeIndex === index ? "true" : undefined}
+                      className={`carousel-dot ${
+                        activeIndex === index ? "active" : ""
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
+                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                  {String(clients.length).padStart(2, "0")} featured clients
+                </p>
+              </div>
+
+              {/* MORE CLIENTS */}
+              <div className="mt-12 flex flex-col gap-6 rounded-[26px] bg-[#101211] p-7 text-white sm:flex-row sm:items-center sm:justify-between sm:p-9">
+                <div className="flex items-start gap-4">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#50DC7D] text-[#101211]">
+                    <Sparkles size={21} />
+                  </div>
+
+                  <div>
+                    <p className="display text-2xl sm:text-3xl">
+                      More stories to come.
+                    </p>
+                    <p className="mt-2 max-w-xl text-sm leading-7 text-white/55">
+                      Our work extends beyond this featured collection,
+                      across website development, social media, graphic
+                      design and other creative engagements.
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  to="/contact"
+                  className="inline-flex shrink-0 items-center justify-center gap-3 rounded-full bg-[#50DC7D] px-6 py-4 text-xs font-bold text-[#101211] transition-all hover:-translate-y-1 hover:bg-white"
+                >
+                  Become a client
+                  <ArrowUpRight size={17} />
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* OUR PROCESS */}
+      <section className="bg-white py-20 sm:py-28">
+        <div className="wrap">
+          <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:gap-16">
+            <div>
+              <p className="kicker">How we work together</p>
+
+              <h2 className="display mt-6 text-5xl leading-[.95] sm:text-7xl">
+                From first thought
+                <br />
+                to final <span className="text-neutral-400">result.</span>
+              </h2>
+
+              <p className="mt-6 max-w-sm text-sm leading-7 text-neutral-500">
+                A clear, collaborative process keeps good ideas moving and
+                makes every decision count.
+              </p>
+            </div>
+
+            <div className="border-t border-neutral-200">
+              {processSteps.map((step) => (
+                <div
+                  key={step.number}
+                  className="grid gap-3 border-b border-neutral-200 py-7 sm:grid-cols-[65px_1fr_1.2fr] sm:items-start sm:gap-6 sm:py-9"
+                >
+                  <span className="mono pt-1 text-[10px] text-neutral-400">
+                    {step.number}
+                  </span>
+
+                  <h3 className="display text-3xl sm:text-4xl">
+                    {step.title}
+                  </h3>
+
+                  <p className="max-w-md text-sm leading-7 text-neutral-500">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* PROCESS */}
-      <section className="border-y border-neutral-200 bg-[#F8F9FA]">
-        <div className="mx-auto max-w-[1600px] px-4 py-16 sm:px-7 sm:py-20 lg:px-12 lg:py-24 xl:px-16 2xl:px-20">
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-4">
-              <p className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500">
-                <span className="mr-2 text-[#26964B]">02 /</span>
-                Our approach
-              </p>
+      {/* STUDIO APPROACH */}
+      <section className="py-20 sm:py-28">
+        <div className="wrap">
+          <div className="grid gap-4 lg:grid-cols-[1fr_.8fr]">
+            <div className="rounded-[27px] bg-[#50DC7D] p-7 text-[#101211] sm:p-10 lg:p-12">
+              <p className="mono text-[10px]">A growing network</p>
 
-              <h2 className="max-w-md text-3xl font-bold leading-[1.08] tracking-[-0.045em] text-neutral-950 sm:text-4xl lg:text-5xl">
-                Clear thinking.
+              <h2 className="display mt-7 text-5xl leading-[.94] sm:text-7xl">
+                Different ideas.
                 <br />
-                <span className="text-neutral-400">Useful outcomes.</span>
+                Shared ambition.
               </h2>
 
-              <p className="mt-5 max-w-md text-sm leading-7 text-neutral-500">
-                Good digital work starts with understanding what needs to
-                happen. The process stays focused on the requirement, the
-                people using the product, and the intended outcome.
+              <p className="mt-6 max-w-md text-sm leading-7 text-[#101211]/70">
+                We collaborate with businesses and creative teams across
+                different locations, industries and stages of growth.
               </p>
+
+              <div className="mt-10 flex items-center gap-3 border-t border-[#101211]/20 pt-6">
+                <span className="display text-5xl">
+                  {String(clients.length).padStart(2, "0")}
+                </span>
+                <span className="text-sm leading-5 text-[#101211]/70">
+                  featured
+                  <br />
+                  collaborations
+                </span>
+              </div>
             </div>
 
-            <div className="lg:col-span-8">
-              <div className="border-t border-neutral-300">
-                {processSteps.map((step) => (
+            <div className="flex flex-col justify-between rounded-[27px] bg-white p-7 ring-1 ring-neutral-200 sm:p-10 lg:p-12">
+              <div>
+                <p className="mono text-[10px] text-neutral-500">
+                  What matters to us
+                </p>
+
+                <h3 className="display mt-6 text-4xl leading-[1] sm:text-5xl">
+                  Good work is built on good collaboration.
+                </h3>
+              </div>
+
+              <div className="mt-10 space-y-4">
+                {[
+                  "Understanding before execution",
+                  "Design with a clear purpose",
+                  "Technology that solves real needs",
+                  "Relationships beyond delivery",
+                ].map((item) => (
                   <div
-                    key={step.number}
-                    className="grid grid-cols-[42px_1fr] gap-4 border-b border-neutral-300 py-5 sm:grid-cols-[56px_0.7fr_1.3fr] sm:items-start sm:gap-6 sm:py-6"
+                    key={item}
+                    className="flex items-center gap-3 border-b border-neutral-200 pb-4 text-sm text-neutral-600"
                   >
-                    <span className="pt-1 font-mono text-xs text-neutral-400">
-                      {step.number}
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#50DC7D]/25">
+                      <Check size={13} />
                     </span>
-
-                    <h3 className="text-base font-bold tracking-tight text-neutral-950 sm:text-lg">
-                      {step.title}
-                    </h3>
-
-                    <p className="col-start-2 text-xs leading-6 text-neutral-500 sm:col-start-auto sm:text-sm sm:leading-7">
-                      {step.description}
-                    </p>
+                    {item}
                   </div>
                 ))}
               </div>
@@ -414,52 +1290,48 @@ const Clients: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-white">
-        <div className="mx-auto max-w-[1600px] px-4 py-16 sm:px-7 sm:py-20 lg:px-12 lg:py-24 xl:px-16 2xl:px-20">
-          <div className="relative overflow-hidden bg-neutral-950">
-            <div className="absolute inset-y-0 left-0 w-1 bg-[#50DC7D]" />
+      {/* FINAL CTA */}
+      <section className="px-3 pb-3 sm:px-5 sm:pb-5">
+        <div className="relative mx-auto max-w-[1700px] overflow-hidden rounded-[27px] bg-[#50DC7D] px-6 py-20 text-[#101211] sm:rounded-[34px] sm:px-12 sm:py-28 lg:px-16 lg:py-36">
+          <div className="pointer-events-none absolute -right-24 -top-32 h-[440px] w-[440px] rounded-full border border-[#101211]/10 sm:h-[600px] sm:w-[600px]" />
+          <div className="pointer-events-none absolute -right-8 -top-16 h-[310px] w-[310px] rounded-full border border-[#101211]/10 sm:h-[450px] sm:w-[450px]" />
 
-            <div className="grid gap-10 px-6 py-10 sm:px-10 sm:py-12 md:grid-cols-12 md:items-end md:px-12 md:py-16 lg:px-16">
-              <div className="md:col-span-8">
-                <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.18em] text-[#50DC7D]">
-                  03 / Your next project
-                </p>
+          <div className="relative z-[1]">
+            <p className="mono text-[10px]">
+              Your story could be next
+            </p>
 
-                <h2 className="max-w-3xl text-3xl font-bold leading-[1.05] tracking-[-0.05em] text-white sm:text-4xl lg:text-6xl">
-                  Have a problem worth solving?
-                </h2>
+            <h2 className="display mt-7 max-w-5xl text-[clamp(3.2rem,8.5vw,8.5rem)] leading-[.88]">
+              Let's make
+              <br />
+              something matter<span className="text-white">.</span>
+            </h2>
 
-                <p className="mt-5 max-w-2xl text-sm leading-7 text-neutral-400 sm:text-base sm:leading-8">
-                  Tell us about your idea, business, or workflow. Let's explore
-                  a practical digital solution built around what you need.
-                </p>
-              </div>
+            <p className="mt-7 max-w-xl text-sm leading-7 text-[#101211]/70 sm:text-base">
+              Have a business to grow, an idea to explore, or a challenge
+              that needs a creative solution? Let's talk.
+            </p>
 
-              <div className="md:col-span-4 md:flex md:justify-end">
-                <a
-                  href="mailto:#2CODEteam@gmail.com"
-                  className="inline-flex min-h-12 w-full items-center justify-center gap-3 bg-[#50DC7D] px-5 py-4 text-sm font-bold text-neutral-950 transition-colors hover:bg-white sm:w-auto sm:px-6"
-                >
-                  <Mail className="h-4 w-4" />
-                  Start a conversation
-                  <ArrowUpRight className="h-4 w-4" />
-                </a>
-              </div>
-            </div>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link to="/contact" className="action action-dark">
+                <span>Start a conversation</span>
+                <span className="action-icon">
+                  <ArrowUpRight size={17} />
+                </span>
+              </Link>
 
-            <div className="flex flex-col gap-2 border-t border-white/10 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-12 lg:px-16">
-              <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-500">
-                #2CODE Team
-              </span>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 text-xs font-medium text-neutral-300 transition-colors hover:text-[#50DC7D]"
-              >
-                Contact us
-                <ArrowRight className="h-3.5 w-3.5" />
+              <Link to="/about" className="action action-light">
+                <span>Discover #2Code</span>
+                <span className="action-icon">
+                  <ArrowUpRight size={17} />
+                </span>
               </Link>
             </div>
+          </div>
+
+          <div className="relative z-[1] mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-[#101211]/20 pt-5 text-xs text-[#101211]/65">
+            <span>#2Code Studio · Digital, creative & technology</span>
+            <span>Shivamogga · Mangalore · Mysore · Kozhikode</span>
           </div>
         </div>
       </section>

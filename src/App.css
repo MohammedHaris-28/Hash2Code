@@ -1,42 +1,90 @@
+
+/*
+==================================================
+#2CODE — APPLICATION STYLES
+Global typography and design tokens are managed
+in index.css.
+==================================================
+*/
+
+/* Root application container */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  isolation: isolate;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Consistent box sizing */
+#root,
+#root *,
+#root *::before,
+#root *::after {
+  box-sizing: border-box;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Images and media */
+img,
+video,
+picture,
+svg {
+  max-width: 100%;
+}
+
+/* Prevent unwanted horizontal overflow */
+html,
+body {
+  width: 100%;
+  min-width: 320px;
+  margin: 0;
+}
+
+/* Smooth interaction defaults */
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Remove default button font differences */
+button {
+  font: inherit;
+}
+
+/* Prevent oversized media from breaking layouts */
+video {
+  display: block;
+  height: auto;
+}
+
+/* Better text wrapping */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  overflow-wrap: break-word;
+}
+
+/* Accessibility: keyboard focus */
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

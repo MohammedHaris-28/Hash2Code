@@ -1,13 +1,25 @@
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Open+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/*
+==================================================
+#2CODE — GLOBAL DESIGN SYSTEM
+Typography: Sora + Open Sans + DM Mono
+==================================================
 */
 
 @layer base {
   :root {
+    /* Typography */
+    --font-display: "Sora", sans-serif;
+    --font-body: "Open Sans", sans-serif;
+    --font-mono: "DM Mono", monospace;
+
+    /* Colors */
     --background: 240 10% 3.9%;
     --foreground: 210 40% 98%;
 
@@ -19,9 +31,9 @@ All colors MUST be HSL.
 
     --primary: 263 70% 50%;
     --primary-foreground: 210 40% 98%;
-    
+
     --primary-glow: 263 70% 60%;
-    
+
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
 
@@ -30,7 +42,7 @@ All colors MUST be HSL.
 
     --accent: 186 100% 45%;
     --accent-foreground: 240 10% 3.9%;
-    
+
     --accent-glow: 186 100% 55%;
 
     --destructive: 0 84% 60%;
@@ -41,63 +53,246 @@ All colors MUST be HSL.
     --ring: 263 70% 50%;
 
     --radius: 0.75rem;
-    
+
     /* Custom gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(263 70% 50%), hsl(217 92% 60%));
-    --gradient-accent: linear-gradient(135deg, hsl(186 100% 45%), hsl(166 100% 50%));
-    --gradient-hero: linear-gradient(to bottom right, hsl(240 10% 3.9%), hsl(263 70% 10%), hsl(217 92% 15%));
-    
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(263 70% 50%),
+      hsl(217 92% 60%)
+    );
+
+    --gradient-accent: linear-gradient(
+      135deg,
+      hsl(186 100% 45%),
+      hsl(166 100% 50%)
+    );
+
+    --gradient-hero: linear-gradient(
+      to bottom right,
+      hsl(240 10% 3.9%),
+      hsl(263 70% 10%),
+      hsl(217 92% 15%)
+    );
+
     /* Shadows */
     --shadow-glow: 0 0 40px hsl(263 70% 50% / 0.3);
     --shadow-accent-glow: 0 0 30px hsl(186 100% 45% / 0.3);
-    
+
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
+/* ================================================
+   GLOBAL BASE STYLES
+================================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+    font-family: var(--font-body);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+  }
+
+  h1 {
+    font-weight: 700;
+    letter-spacing: -0.055em;
+  }
+
+  h2 {
+    font-weight: 700;
+    letter-spacing: -0.045em;
+  }
+
+  h3,
+  h4 {
+    font-weight: 600;
+  }
+
+  /* Interface controls */
+  button,
+  input,
+  textarea,
+  select {
+    font-family: var(--font-body);
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Links */
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Form elements */
+  input,
+  textarea,
+  select {
+    font-size: inherit;
+  }
+
+  /* Text selection */
+  ::selection {
+    background: hsl(263 70% 50% / 0.3);
+    color: hsl(210 40% 98%);
+  }
+
+  /* Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(217 33% 30%) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: hsl(217 33% 30%);
+    border-radius: 20px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(217 33% 45%);
+  }
+}
+
+/* ================================================
+   CUSTOM TYPOGRAPHY UTILITIES
+================================================ */
+
 @layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .text-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.065em;
+    line-height: 0.98;
+  }
+
+  .text-heading {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1.15;
+  }
+
+  .text-body {
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.75;
+  }
+
+  .text-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Existing gradient utilities */
   .gradient-primary {
     background: var(--gradient-primary);
   }
-  
+
   .gradient-accent {
     background: var(--gradient-accent);
   }
-  
+
   .gradient-hero {
     background: var(--gradient-hero);
   }
-  
+
   .text-gradient {
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-primary);
   }
-  
+
   .text-accent-gradient {
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-accent);
   }
-  
+
+  /* Glass effects */
   .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    @apply border border-white/10 bg-white/5 backdrop-blur-xl;
   }
-  
+
+  /* Glow effects */
   .glow {
     box-shadow: var(--shadow-glow);
   }
-  
+
   .glow-accent {
     box-shadow: var(--shadow-accent-glow);
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+/* ================================================
+   ACCESSIBILITY & MOTION
+================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

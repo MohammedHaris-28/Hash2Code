@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -20,72 +21,97 @@ const TermsOfService: React.FC = () => {
   const lastUpdated = "October 20, 2026";
 
   return (
-    <main className="min-h-screen overflow-x-clip bg-white font-sans text-neutral-950 antialiased selection:bg-[#50DC7D]/30">
-      {/* Subtle background grid */}
+    <main className="relative min-h-screen overflow-x-clip bg-[#F8F9FA] font-sans text-[#101211] antialiased selection:bg-[#50DC7D]/30">
+      {/* Background grid */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 opacity-60"
+        className="pointer-events-none fixed inset-0 z-0 opacity-40"
       >
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:32px_32px]" />
       </div>
 
       {/* Hero */}
-      <header className="relative border-b border-neutral-200 bg-white">
-        <div className="mx-auto w-full max-w-[1440px] px-5 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24 2xl:px-16">
+      <header className="relative z-10 border-b border-[#101211]/10 bg-white">
+        <div className="mx-auto w-full max-w-[1480px] px-5 pb-10 pt-8 sm:px-8 sm:pb-14 sm:pt-10 lg:px-12 lg:pb-16 2xl:px-16">
           <Link
             to="/"
-            className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-950"
+            className="group mb-12 inline-flex items-center gap-2 rounded-full border border-[#101211]/10 bg-[#F8F9FA] px-4 py-2.5 text-xs font-semibold text-neutral-600 transition-all hover:border-[#50DC7D] hover:bg-[#50DC7D]/10 hover:text-[#101211] sm:mb-16"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
             Back to home
           </Link>
 
-          <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-12">
+          <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-12">
             <div className="lg:col-span-8">
-              <div className="mb-6 inline-flex items-center gap-2 border border-neutral-200 bg-neutral-50 px-3 py-2">
-                <span className="h-2 w-2 bg-[#50DC7D]" />
-                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-600">
+              <div className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-[#101211]/10 bg-[#F8F9FA] px-3.5 py-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#50DC7D] opacity-50" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#50DC7D]" />
+                </span>
+                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#555B57]">
                   Legal / Service Terms
                 </span>
               </div>
 
-              <h1 className="max-w-5xl text-[clamp(2.8rem,6.4vw,6rem)] font-bold leading-[0.98] tracking-[-0.065em]">
-                Terms of <span className="text-neutral-400">Service.</span>
+              <h1 className="max-w-5xl text-[clamp(3rem,7vw,6.8rem)] font-bold leading-[0.94] tracking-[-0.075em]">
+                Terms of
+                <br />
+                <span className="text-[#A4AAA6]">Service.</span>
               </h1>
 
-              <p className="mt-6 max-w-2xl text-sm leading-7 text-neutral-600 sm:text-base sm:leading-8">
-                These terms explain the conditions that apply when you visit #2Code’s
-                website, contact us, or engage us for digital technology services.
+              <p className="mt-7 max-w-2xl text-sm leading-7 text-[#686E69] sm:text-base sm:leading-8">
+                These terms explain the conditions that apply when you visit
+                #2Code’s website, contact us, or engage us for digital technology
+                services.
               </p>
 
-              <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.12em] text-neutral-400 sm:text-xs">
-                Last updated: {lastUpdated}
-              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.13em] text-[#858B86]">
+                  Last updated: {lastUpdated}
+                </span>
+                <span className="hidden h-1 w-1 rounded-full bg-[#50DC7D] sm:block" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.13em] text-[#858B86]">
+                  15 sections
+                </span>
+              </div>
             </div>
 
-            <div className="hidden border-l border-neutral-200 pl-6 lg:col-span-4 lg:block lg:pb-1">
-              <ShieldCheck className="mb-4 h-7 w-7 text-neutral-700" />
-              <p className="max-w-xs text-sm leading-7 text-neutral-500">
-                Clear expectations for both #2Code and each client, including
-                deliverables, milestones, approvals, and ongoing support.
-              </p>
+            <div className="hidden lg:col-span-4 lg:block">
+              <div className="rounded-[26px] border border-[#101211]/10 bg-[#F8F9FA] p-7 xl:p-8">
+                <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#101211]/10 bg-white">
+                  <ShieldCheck className="h-6 w-6 text-[#303A33]" />
+                </div>
+                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#858B86]">
+                  Our commitment
+                </p>
+                <p className="mt-3 text-lg font-semibold leading-7 tracking-[-0.035em] text-[#101211]">
+                  Clear expectations.
+                  <br />
+                  Better partnerships.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#737A74]">
+                  Transparent conditions for deliverables, milestones,
+                  approvals, payments, and ongoing support.
+                </p>
+                <div className="mt-7 h-1 w-14 rounded-full bg-[#50DC7D]" />
+              </div>
             </div>
           </div>
 
-          <div className="mt-12 flex flex-col gap-3 border-t border-neutral-200 pt-4 sm:mt-16 sm:flex-row sm:items-center sm:justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-400">
+          <div className="mt-12 flex flex-col gap-3 border-t border-[#101211]/10 pt-5 sm:mt-16 sm:flex-row sm:items-center sm:justify-between">
+            <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#858B86]">
               Hash2Code Team
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-400">
+            <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#858B86]">
               Terms / Conditions / Services
             </span>
           </div>
         </div>
       </header>
 
-      {/* Overview strip */}
-      <section className="border-b border-neutral-200 bg-[#F8F9FA]">
-        <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 px-5 sm:grid-cols-2 sm:px-8 lg:grid-cols-2 lg:px-12 2xl:px-16">
+      {/* Overview */}
+      <section className="relative z-10 border-b border-[#101211]/10 bg-white">
+        <div className="mx-auto grid w-full max-w-[1480px] grid-cols-1 gap-3 px-5 py-5 sm:grid-cols-2 sm:px-8 sm:py-7 lg:px-12 2xl:px-16">
           <OverviewItem
             icon={<BriefcaseBusiness className="h-5 w-5" />}
             title="Project-specific scope"
@@ -95,42 +121,59 @@ const TermsOfService: React.FC = () => {
             icon={<ShieldCheck className="h-5 w-5" />}
             title="Clear responsibilities"
             description="We set clear expectations for both parties, including client approvals, payments, supplied materials, and ongoing support."
-            last
           />
         </div>
       </section>
 
       {/* Terms body */}
-      <section className="bg-white">
-        <div className="mx-auto w-full max-w-[1440px] px-5 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-16 2xl:px-16">
+      <section className="relative z-10">
+        <div className="mx-auto w-full max-w-[1480px] px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20 2xl:px-16">
           <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.6fr)] lg:gap-14 xl:gap-20">
+            {/* Sidebar */}
             <aside className="lg:sticky lg:top-8">
-              <p className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500">
-                Terms guide
-              </p>
-              <h2 className="max-w-lg text-3xl font-bold leading-[1.08] tracking-[-0.05em] sm:text-4xl">
-                Our agreement.{" "}
-                <span className="text-neutral-400">Transparent & fair.</span>
-              </h2>
-              <p className="mt-5 max-w-md text-sm leading-7 text-neutral-500">
-                This page outlines the standard legal and service conditions
-                governing professional engagements with #2Code.
-              </p>
-              <div className="mt-7 border-l-2 border-[#50DC7D] bg-[#F8F9FA] px-4 py-4">
-                <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-400">
-                  Need help?
+              <div className="rounded-[26px] border border-[#101211]/10 bg-white p-6 sm:p-7">
+                <p className="mb-4 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[#858B86]">
+                  Terms guide
                 </p>
-                <a
-                  href="mailto:hash2codeteam@gmail.com"
-                  className="mt-2 inline-flex items-center gap-2 break-all text-sm font-semibold text-neutral-900 transition-colors hover:text-[#26964B]"
-                >
-                  hash2codeteam@gmail.com
-                  <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
-                </a>
+
+                <h2 className="max-w-lg text-3xl font-bold leading-[1.08] tracking-[-0.06em] sm:text-4xl">
+                  Our agreement.
+                  <span className="text-[#A4AAA6]">
+                    {" "}Transparent & fair.
+                  </span>
+                </h2>
+
+                <p className="mt-5 text-sm leading-7 text-[#737A74]">
+                  This page outlines the standard legal and service conditions
+                  governing professional engagements with #2Code.
+                </p>
+
+                <div className="mt-7 flex items-center justify-between border-t border-[#101211]/10 pt-5">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.13em] text-[#858B86]">
+                    Document
+                  </span>
+                  <span className="rounded-full bg-[#50DC7D]/15 px-3 py-1.5 font-mono text-[10px] font-semibold text-[#287B42]">
+                    TERMS / 2026
+                  </span>
+                </div>
+
+                <div className="mt-7 rounded-2xl border border-[#50DC7D]/30 bg-[#F6FBF7] p-4">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#858B86]">
+                    Need help?
+                  </p>
+                  <a
+                    href="mailto:hash2codeteam@gmail.com"
+                    className="mt-2 inline-flex items-center gap-2 break-all text-sm font-semibold text-[#101211] transition-colors hover:text-[#26964B]"
+                  >
+                    hash2codeteam@gmail.com
+                    <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+                  </a>
+                </div>
               </div>
             </aside>
 
-            <div className="min-w-0 border-t border-neutral-200">
+            {/* Main content */}
+            <div className="min-w-0 overflow-hidden rounded-[26px] border border-[#101211]/10 bg-white px-5 sm:px-8 lg:px-10">
               <TermsSection
                 number="01"
                 icon={<FileText className="h-5 w-5" />}
@@ -369,21 +412,22 @@ const TermsOfService: React.FC = () => {
                   If you have any questions or concerns regarding these Terms of
                   Service, please contact us directly.
                 </p>
-                <div className="mt-5 flex items-start gap-4 border border-neutral-200 bg-[#F8F9FA] p-4 sm:p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-neutral-200 bg-white">
-                    <Mail className="h-5 w-5 text-neutral-700" />
+
+                <div className="mt-5 flex items-start gap-4 rounded-2xl border border-[#101211]/10 bg-[#F8F9FA] p-4 sm:p-5">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#101211]/10 bg-white">
+                    <Mail className="h-5 w-5 text-[#303A33]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="mb-1 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-400">
+                    <p className="mb-1 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-[#858B86]">
                       Email
                     </p>
                     <a
                       href="mailto:hash2codeteam@gmail.com"
-                      className="break-all text-sm font-semibold text-neutral-900 transition-colors hover:text-[#26964B] sm:text-base"
+                      className="break-all text-sm font-semibold text-[#101211] transition-colors hover:text-[#26964B] sm:text-base"
                     >
                       hash2codeteam@gmail.com
                     </a>
-                    <p className="mt-2 text-xs text-neutral-500">
+                    <p className="mt-2 text-xs text-[#858B86]">
                       #2Code — Digital Technology Studio
                     </p>
                   </div>
@@ -392,32 +436,53 @@ const TermsOfService: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-10 border-t border-neutral-200 pt-6">
-            <p className="max-w-4xl text-xs leading-6 text-neutral-400 sm:text-sm">
-              These Terms of Service are provided for general informational
-              purposes and should be reviewed and adapted to your specific
-              business operations and applicable legal requirements. For information
-              about data privacy, please review our{" "}
-              <Link to="/privacy-policy" className="underline hover:text-neutral-700">
-                Privacy Policy
-              </Link>
-              .
-            </p>
+          {/* Disclaimer */}
+          <div className="mt-10 rounded-[22px] border border-[#101211]/10 bg-white p-5 sm:mt-14 sm:p-7">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F8F9FA]">
+                <FileText className="h-4 w-4 text-[#747B75]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[#101211]">
+                  Important information
+                </p>
+                <p className="mt-2 max-w-4xl text-xs leading-6 text-[#858B86] sm:text-sm">
+                  These Terms of Service are provided for general informational
+                  purposes and should be reviewed and adapted to your specific
+                  business operations and applicable legal requirements. For
+                  information about data privacy, please review our{" "}
+                  <Link
+                    to="/privacy-policy"
+                    className="font-semibold text-[#287B42] underline decoration-[#50DC7D] underline-offset-4 transition-colors hover:text-[#101211]"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-neutral-200 bg-[#F8F9FA]">
-        <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-5 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12 2xl:px-16">
-          <p className="text-xs text-neutral-400">
-            © {new Date().getFullYear()} #2Code. All rights reserved.
-          </p>
+      <footer className="relative z-10 border-t border-[#101211]/10 bg-white">
+        <div className="mx-auto flex w-full max-w-[1480px] flex-col gap-4 px-5 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12 2xl:px-16">
+          <div>
+            <p className="text-xs font-medium text-[#555B57]">
+              © {new Date().getFullYear()} #2Code. All rights reserved.
+            </p>
+            <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.13em] text-[#A0A6A1]">
+              Digital Technology Studio
+            </p>
+          </div>
+
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-500 transition-colors hover:text-neutral-950"
+            className="group inline-flex items-center gap-2 self-start rounded-full border border-[#101211]/10 px-4 py-2.5 text-xs font-semibold text-[#555B57] transition-all hover:border-[#50DC7D] hover:bg-[#50DC7D]/10 hover:text-[#101211] sm:self-auto"
           >
-            Return to #2Code <ArrowUpRight className="h-3.5 w-3.5" />
+            Return to #2Code
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
       </footer>
@@ -429,26 +494,20 @@ interface OverviewItemProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  last?: boolean;
 }
 
 const OverviewItem = ({
   icon,
   title,
   description,
-  last = false,
 }: OverviewItemProps) => (
-  <div
-    className={`flex items-start gap-4 border-b border-neutral-200 py-5 sm:py-6 lg:border-b-0 ${
-      last ? "" : "lg:border-r lg:pr-6"
-    } sm:pr-5 lg:my-5 lg:py-2 ${last ? "lg:pl-6" : "lg:pl-0"}`}
-  >
-    <div className="flex h-11 w-11 shrink-0 items-center justify-center border border-neutral-200 bg-white text-neutral-700">
+  <div className="flex items-start gap-4 rounded-[22px] border border-[#101211]/10 bg-[#F8F9FA] p-5 sm:p-6">
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#101211]/10 bg-white text-[#303A33]">
       {icon}
     </div>
     <div>
-      <h2 className="mb-1.5 text-sm font-bold text-neutral-900">{title}</h2>
-      <p className="max-w-md text-xs leading-6 text-neutral-500 sm:text-sm">
+      <h2 className="mb-1.5 text-sm font-bold text-[#101211]">{title}</h2>
+      <p className="max-w-md text-xs leading-6 text-[#737A74] sm:text-sm">
         {description}
       </p>
     </div>
@@ -462,36 +521,43 @@ interface TermsSectionProps {
   children: React.ReactNode;
 }
 
-const TermsSection = ({ number, title, icon, children }: TermsSectionProps) => (
-  <section className="border-b border-neutral-200 py-8 last:border-b-0 sm:py-9">
-    <div className="mb-4 flex items-start gap-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-neutral-200 bg-[#F8F9FA] text-neutral-700">
+const TermsSection = ({
+  number,
+  title,
+  icon,
+  children,
+}: TermsSectionProps) => (
+  <section className="border-b border-[#101211]/10 py-8 last:border-b-0 sm:py-10">
+    <div className="mb-5 flex items-start gap-4">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#101211]/10 bg-[#F8F9FA] text-[#303A33]">
         {icon ?? (
-          <span className="font-mono text-xs font-semibold text-neutral-500">
+          <span className="font-mono text-xs font-semibold text-[#737A74]">
             {number}
           </span>
         )}
       </div>
+
       <div className="min-w-0 pt-0.5">
-        <span className="font-mono text-[9px] font-medium uppercase tracking-[0.15em] text-neutral-400">
+        <span className="font-mono text-[9px] font-medium uppercase tracking-[0.15em] text-[#A0A6A1]">
           Section {number}
         </span>
-        <h2 className="mt-1 text-xl font-bold leading-tight tracking-[-0.035em] text-neutral-950 sm:text-2xl">
+        <h2 className="mt-1 text-xl font-bold leading-tight tracking-[-0.045em] text-[#101211] sm:text-2xl">
           {title}
         </h2>
       </div>
     </div>
-    <div className="space-y-4 text-sm leading-7 text-neutral-600 sm:text-[15px]">
+
+    <div className="space-y-4 pl-0 text-sm leading-7 text-[#626963] sm:pl-14 sm:text-[15px]">
       {children}
     </div>
   </section>
 );
 
 const BulletList = ({ items }: { items: string[] }) => (
-  <ul className="my-4 space-y-2.5">
+  <ul className="my-4 space-y-3">
     {items.map((item) => (
       <li key={item} className="flex items-start gap-3">
-        <span className="mt-[11px] h-1.5 w-1.5 shrink-0 bg-[#50DC7D]" />
+        <span className="mt-[10px] h-2 w-2 shrink-0 rounded-full bg-[#50DC7D]" />
         <span>{item}</span>
       </li>
     ))}
