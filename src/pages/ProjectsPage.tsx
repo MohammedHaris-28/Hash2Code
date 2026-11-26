@@ -36,6 +36,10 @@ import thunder from "@/assets/thunderfitness.png";
 import sirmvgsc from "@/assets/sirmvgsc.png";
 import restrosync from "@/assets/restrosync.png";
 
+// NEW PROJECT IMAGES
+import threadit from "@/assets/threadit.png";
+import campusclock from "@/assets/campusclock.png";
+
 interface ProjectRow {
   title?: string;
   type?: string;
@@ -62,6 +66,8 @@ interface Project {
 const GOOGLE_SHEETS_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4gtuOprrc8dj5VHIDPhKA6F9VZj-vNAtq0oWzmMJQvaAG0ht08MWw0x67wIGZhLedeeVemmuPEtxE/pub?output=csv";
 
+// LOCAL PROJECT IMAGE MAPPING
+// Project titles are matched without case sensitivity.
 const localImages: Record<string, string> = {
   pulspense,
   "thunderfitness gym": thunder,
@@ -70,6 +76,10 @@ const localImages: Record<string, string> = {
   bloodsync: Bloodsync,
   "#2code-restrosync": restrosync,
   "architects portfolio website": Architects,
+
+  // NEW PROJECTS
+  threadit,
+  campusclock,
 };
 
 const fallbackProjects: Project[] = [
@@ -179,6 +189,51 @@ const fallbackProjects: Project[] = [
     imageUrl: Architects,
     order: 7,
   },
+
+  // NEW FALLBACK PROJECT: THREADIT
+  {
+    title: "ThreadIt",
+    type: "Web App",
+    description:
+      "An in-campus social media and placement portal designed to connect college students through campus communities, content, conversations, and career opportunities.",
+    technologies: ["TypeScript", "React", "Supabase"],
+    features: [
+      "Post Content and Articles",
+      "Community Chat",
+      "Placement Applications",
+    ],
+    url: "https://threadit.netlify.app/",
+    imageUrl: threadit,
+    order: 8,
+  },
+
+  // NEW FALLBACK PROJECT: CAMPUSCLOCK
+  {
+    title: "CampusClock",
+    type: "ERP System",
+    description:
+      "A school management software, app, and website ecosystem connecting administrators, teachers, students, and parents through a unified campus management platform.",
+    technologies: [
+      "Flutter",
+      "Django",
+      "PostgreSQL",
+      "OAuth",
+      "Google Cloud",
+      "Apache",
+      "Nginx",
+      "Redis",
+      "Sentry",
+    ],
+    features: [
+      "AI-Powered Campus Management",
+      "Administrator Dashboard",
+      "Teacher and Student Management",
+      "Parent Communication",
+    ],
+    url: "https://campusclockproject.netlify.app/",
+    imageUrl: campusclock,
+    order: 9,
+  },
 ];
 
 const splitList = (value?: string) =>
@@ -201,6 +256,7 @@ const iconForProject = (project: Project) => {
   if (text.includes("expense") || text.includes("puls")) return BarChart3;
   if (text.includes("fitness") || text.includes("gym")) return Flame;
   if (text.includes("coffee") || text.includes("aroma")) return Coffee;
+
   if (
     text.includes("blood") ||
     text.includes("database") ||
@@ -208,6 +264,7 @@ const iconForProject = (project: Project) => {
   ) {
     return Database;
   }
+
   if (text.includes("app") || text.includes("mobile")) return Smartphone;
   if (text.includes("website") || text.includes("library")) return Globe;
 
@@ -219,7 +276,10 @@ const sectionReveal = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" as const },
+    transition: {
+      duration: 0.6,
+      ease: "easeOut" as const,
+    },
   },
 };
 
@@ -234,6 +294,7 @@ const Projects: React.FC = () => {
 
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  // LOAD PROJECTS FROM GOOGLE SHEETS
   useEffect(() => {
     const controller = new AbortController();
 
@@ -242,10 +303,6 @@ const Projects: React.FC = () => {
       setLoadError("");
 
       try {
-        if (!GOOGLE_SHEETS_CSV_URL) {
-          throw new Error("Google Sheets CSV URL is missing.");
-        }
-
         const response = await fetch(GOOGLE_SHEETS_CSV_URL, {
           cache: "no-store",
           signal: controller.signal,
@@ -281,7 +338,11 @@ const Projects: React.FC = () => {
               technologies: splitList(row.technologies),
               features: splitList(row.features),
               url: row.url?.trim() || "",
-              imageUrl: row.imageUrl?.trim() || localImage,
+
+              // GOOGLE SHEET IMAGE URL TAKES PRIORITY.
+              // IF EMPTY, USE THE MATCHING LOCAL ASSET.
+              imageUrl: row.imageUrl?.trim() || localImage || "",
+
               order:
                 Number.isFinite(rawOrder) &&
                 row.order !== "" &&
@@ -314,6 +375,7 @@ const Projects: React.FC = () => {
     return () => controller.abort();
   }, [retryKey]);
 
+  // FILTERS
   const projectTypes = useMemo(
     () => [
       "All",
@@ -345,53 +407,44 @@ const Projects: React.FC = () => {
     });
   }, [projects, search, selectedType]);
 
+  // RESET CAROUSEL WHEN FILTERS CHANGE
   useEffect(() => {
     setActiveSlide(0);
 
     if (carouselRef.current) {
-      carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      carouselRef.current.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
     }
   }, [search, selectedType]);
 
+  // CAROUSEL CONTROLS
   const scrollCarousel = (direction: "prev" | "next") => {
     const container = carouselRef.current;
     if (!container) return;
 
-    const card = container.querySelector<HTMLElement>(
-      "[data-project-card]",
+    const cards = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-project-card]"),
     );
 
-    const cardWidth = card?.offsetWidth ?? 380;
-    const gap = 20;
+    if (!cards.length) return;
 
-    container.scrollBy({
-      left: direction === "next" ? cardWidth + gap : -(cardWidth + gap),
-      behavior: "smooth",
-    });
-  };
+    const current = Math.min(activeSlide, cards.length - 1);
+    const next =
+      direction === "next"
+        ? Math.min(current + 1, cards.length - 1)
+        : Math.max(current - 1, 0);
 
-  const handleCarouselScroll = () => {
-    const container = carouselRef.current;
-    if (!container) return;
-
-    const card = container.querySelector<HTMLElement>(
-      "[data-project-card]",
-    );
-
-    if (!card) return;
-
-    const gap = 20;
-    const cardWidth = card.offsetWidth + gap;
-
-    setActiveSlide(Math.round(container.scrollLeft / cardWidth));
+    scrollToSlide(next);
   };
 
   const scrollToSlide = (index: number) => {
     const container = carouselRef.current;
     if (!container) return;
 
-    const cards = container.querySelectorAll<HTMLElement>(
-      "[data-project-card]",
+    const cards = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-project-card]"),
     );
 
     const target = cards[index];
@@ -401,6 +454,35 @@ const Projects: React.FC = () => {
       left: target.offsetLeft - container.offsetLeft,
       behavior: "smooth",
     });
+  };
+
+  const handleCarouselScroll = () => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const cards = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-project-card]"),
+    );
+
+    if (!cards.length) return;
+
+    const containerLeft = container.getBoundingClientRect().left;
+
+    let closestIndex = 0;
+    let closestDistance = Infinity;
+
+    cards.forEach((card, index) => {
+      const distance = Math.abs(
+        card.getBoundingClientRect().left - containerLeft,
+      );
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    setActiveSlide(closestIndex);
   };
 
   return (
@@ -431,10 +513,7 @@ const Projects: React.FC = () => {
                 Ideas into
                 <br />
                 <span className="text-neutral-400">digital</span>{" "}
-                <span className="relative inline-block">
-                  reality.
-                  
-                </span>
+                <span className="relative inline-block">reality.</span>
               </h1>
             </motion.div>
 
@@ -477,47 +556,46 @@ const Projects: React.FC = () => {
       {/* OVERVIEW */}
       <section className="border-b border-black/[0.08] bg-[#F8F9FA]">
         <div className="mx-auto grid max-w-[1480px] grid-cols-1 px-5 sm:grid-cols-3 sm:px-8 lg:px-14 xl:px-20">
-          <div className="flex items-center gap-4 border-b border-black/[0.08] py-6 sm:border-b-0 sm:border-r sm:py-8 sm:pr-6">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-black/[0.08] bg-white">
-              <Layers3 className="h-5 w-5 text-neutral-700" />
+          {[
+            {
+              icon: Layers3,
+              value: "Designing",
+              label: "Thoughtful and Practical",
+            },
+            {
+              icon: Globe,
+              value: "Digital",
+              label: "Websites & platforms",
+            },
+            {
+              icon: Sparkles,
+              value: "Custom",
+              label: "Project-led solutions",
+            },
+          ].map(({ icon: Icon, value, label }, index) => (
+            <div
+              key={label}
+              className={`flex items-center gap-4 py-6 sm:py-8 ${
+                index === 0
+                  ? "border-b border-black/[0.08] sm:border-b-0 sm:border-r sm:pr-6"
+                  : index === 1
+                    ? "border-b border-black/[0.08] sm:border-b-0 sm:border-r sm:px-6"
+                    : "sm:pl-6"
+              }`}
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-black/[0.08] bg-white">
+                <Icon className="h-5 w-5 text-neutral-700" />
+              </div>
+              <div>
+                <p className="font-display text-2xl font-bold tracking-[-0.05em]">
+                  {value}
+                </p>
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.13em] text-neutral-500">
+                  {label}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-display text-2xl font-bold tracking-[-0.05em]">
-                {String(projects.length).padStart(2, "0")}
-              </p>
-              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.13em] text-neutral-500">
-                Featured projects
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 border-b border-black/[0.08] py-6 sm:border-b-0 sm:border-r sm:px-6 sm:py-8">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-black/[0.08] bg-white">
-              <Globe className="h-5 w-5 text-neutral-700" />
-            </div>
-            <div>
-              <p className="font-display text-2xl font-bold tracking-[-0.05em]">
-                Digital
-              </p>
-              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.13em] text-neutral-500">
-                Websites & platforms
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 py-6 sm:py-8 sm:pl-6">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-black/[0.08] bg-white">
-              <Sparkles className="h-5 w-5 text-neutral-700" />
-            </div>
-            <div>
-              <p className="font-display text-2xl font-bold tracking-[-0.05em]">
-                Custom
-              </p>
-              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.13em] text-neutral-500">
-                Project-led solutions
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -544,11 +622,9 @@ const Projects: React.FC = () => {
       </section>
 
       {/* SELECTED PROJECTS */}
-      <section
-        id="selected-projects"
-        className="scroll-mt-24 bg-[#F8F9FA]"
-      >
+      <section id="selected-projects" className="scroll-mt-24 bg-[#F8F9FA]">
         <div className="mx-auto max-w-[1480px] px-5 py-16 sm:px-8 sm:py-20 lg:px-14 lg:py-28 xl:px-20">
+
           <div className="mb-10 grid gap-6 md:mb-12 md:grid-cols-12 md:items-end">
             <div className="md:col-span-7">
               <p className="mb-4 flex items-center gap-2 font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-neutral-500">
@@ -565,8 +641,7 @@ const Projects: React.FC = () => {
 
             <p className="max-w-lg text-sm leading-7 text-neutral-500 md:col-span-5 md:justify-self-end lg:text-right">
               Every project starts with a different challenge. Take a closer
-              look at the products, platforms, and experiences we've
-              developed.
+              look at the products, platforms, and experiences we've developed.
             </p>
           </div>
 
@@ -649,7 +724,7 @@ const Projects: React.FC = () => {
             </div>
           )}
 
-          {/* PROJECT CAROUSEL */}
+          {/* PROJECT CARDS */}
           {visibleProjects.length === 0 ? (
             <div className="rounded-[26px] border border-black/[0.08] bg-white px-5 py-16 text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F8F9FA]">
@@ -694,7 +769,7 @@ const Projects: React.FC = () => {
               <div
                 ref={carouselRef}
                 onScroll={handleCarouselScroll}
-                className="project-carousel flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-5"
+                className="project-carousel flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-5 sm:gap-5"
               >
                 {visibleProjects.map((project, index) => {
                   const Icon = iconForProject(project);
@@ -712,55 +787,52 @@ const Projects: React.FC = () => {
                         duration: 0.5,
                         delay: (index % 3) * 0.06,
                       }}
-                      className="group flex min-w-0 w-[88%] max-w-[430px] shrink-0 snap-start flex-col overflow-hidden rounded-[26px] border border-black/[0.08] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-black/15 hover:shadow-[0_20px_55px_rgba(16,18,17,0.07)] sm:w-[65%] lg:w-[calc(50%-10px)] xl:w-[calc(33.333%-14px)]"
+                      className="project-card group flex min-w-0 shrink-0 snap-start flex-col overflow-hidden rounded-[22px] border border-black/[0.08] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-black/15 hover:shadow-[0_20px_55px_rgba(16,18,17,0.07)] sm:rounded-[26px]"
                     >
                       {/* IMAGE */}
-                      <div className="relative aspect-[16/10] overflow-hidden bg-[#ECEFEC]">
+                      <div className="project-card-image relative overflow-hidden bg-[#ECEFEC]">
                         {project.imageUrl ? (
                           <img
                             src={project.imageUrl}
                             alt={`${project.title} project preview`}
                             loading="lazy"
-                            className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.045]"
+                            className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.035]"
                             onError={(event) => {
                               const image = event.currentTarget;
 
-                              if (
-                                fallbackImage &&
-                                !image.dataset.fallback
-                              ) {
+                              if (fallbackImage && !image.dataset.fallback) {
                                 image.dataset.fallback = "true";
                                 image.src = fallbackImage;
                               } else {
-                                image.style.opacity = "0";
+                                image.style.display = "none";
                               }
                             }}
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center">
-                            <Icon className="h-16 w-16 stroke-[1] text-neutral-300" />
+                            <Icon className="h-14 w-14 stroke-[1] text-neutral-300" />
                           </div>
                         )}
 
-                        <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/70 bg-white/90 px-3.5 py-2.5 backdrop-blur-md">
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#50DC7D]" />
-                          <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-neutral-700">
+                        <div className="absolute left-3 top-3 z-10 flex max-w-[calc(100%-24px)] items-center gap-2 rounded-full border border-white/70 bg-white/90 px-3 py-2 backdrop-blur-md sm:left-4 sm:top-4 sm:px-3.5">
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#50DC7D]" />
+                          <span className="truncate font-mono text-[8px] uppercase tracking-[0.1em] text-neutral-700 sm:text-[9px]">
                             {project.type}
                           </span>
                         </div>
-
-                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/15 to-transparent" />
                       </div>
 
-                      {/* CARD CONTENT */}
-                      <div className="flex flex-1 flex-col p-5 sm:p-6">
-                        <div className="flex items-start justify-between gap-4">
+                      {/* COMPACT CARD CONTENT */}
+                      <div className="flex flex-1 flex-col p-4 sm:p-5 lg:p-6">
+
+                        {/* TITLE + ACTION */}
+                        <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="mb-2 font-mono text-[9px] uppercase tracking-[0.15em] text-neutral-400">
+                            <p className="mb-1.5 font-mono text-[8px] uppercase tracking-[0.14em] text-neutral-400 sm:text-[9px]">
                               {project.type}
                             </p>
 
-                            <h3 className="break-words font-display text-[22px] font-bold leading-tight tracking-[-0.045em] text-[#101211] sm:text-2xl">
+                            <h3 className="break-words font-display text-xl font-bold leading-tight tracking-[-0.045em] text-[#101211] sm:text-2xl">
                               {project.title}
                             </h3>
                           </div>
@@ -771,56 +843,54 @@ const Projects: React.FC = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               aria-label={`Visit ${project.title}`}
-                              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 text-neutral-600 transition-all duration-200 hover:border-[#50DC7D] hover:bg-[#50DC7D] hover:text-neutral-950"
+                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/10 text-neutral-600 transition-all duration-200 hover:border-[#50DC7D] hover:bg-[#50DC7D] hover:text-neutral-950 sm:h-10 sm:w-10"
                             >
                               <ArrowUpRight className="h-4 w-4" />
                             </a>
                           ) : (
-                            <span
-                              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/[0.06] text-neutral-300"
-                              title="No public link available"
-                            >
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/[0.06] text-neutral-300 sm:h-10 sm:w-10">
                               <ArrowUpRight className="h-4 w-4" />
                             </span>
                           )}
                         </div>
 
-                        <p className="mt-4 text-sm leading-7 text-neutral-600">
+                        {/* SHORT DESCRIPTION */}
+                        <p className="project-description mt-3 text-[12px] leading-[1.65] text-neutral-500 sm:text-[13px] sm:leading-6">
                           {project.description ||
                             "More details about this project will be available soon."}
                         </p>
 
                         {/* FEATURES */}
                         {project.features.length > 0 && (
-                          <div className="mt-6 border-t border-black/[0.07] pt-5">
-                            <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.15em] text-neutral-400">
-                              Project highlights
+                          <div className="mt-4 border-t border-black/[0.07] pt-3.5">
+                            <p className="mb-2.5 font-mono text-[8px] uppercase tracking-[0.14em] text-neutral-400 sm:text-[9px]">
+                              Key highlights
                             </p>
 
-                            <ul className="space-y-2.5">
+                            <ul className="project-features grid grid-cols-2 gap-x-2 gap-y-2">
                               {project.features.slice(0, 4).map((feature) => (
                                 <li
                                   key={feature}
-                                  className="flex items-start gap-2.5 text-xs leading-5 text-neutral-600"
+                                  className="flex min-w-0 items-start gap-1.5 text-[10px] leading-[1.45] text-neutral-600 sm:text-[11px]"
                                 >
-                                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#50DC7D]/15">
-                                    <Check className="h-2.5 w-2.5 text-[#26964B]" />
+                                  <span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-[#50DC7D]/15">
+                                    <Check className="h-2 w-2 text-[#26964B]" />
                                   </span>
-                                  <span>{feature}</span>
+                                  <span className="min-w-0">{feature}</span>
                                 </li>
                               ))}
                             </ul>
                           </div>
                         )}
 
-                        {/* TECHNOLOGIES AND LINK */}
-                        <div className="mt-auto pt-6">
+                        {/* FOOTER */}
+                        <div className="mt-auto pt-4">
                           {project.technologies.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 border-t border-black/[0.07] pt-4">
-                              {project.technologies.map((tech) => (
+                            <div className="flex flex-wrap gap-1.5 border-t border-black/[0.07] pt-3.5">
+                              {project.technologies.slice(0, 4).map((tech) => (
                                 <span
                                   key={tech}
-                                  className="rounded-full border border-black/[0.08] bg-[#F8F9FA] px-3 py-1.5 font-mono text-[9px] text-neutral-600"
+                                  className="rounded-full border border-black/[0.08] bg-[#F8F9FA] px-2.5 py-1 font-mono text-[8px] text-neutral-600 sm:text-[9px]"
                                 >
                                   {tech}
                                 </span>
@@ -833,10 +903,10 @@ const Projects: React.FC = () => {
                               href={project.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-neutral-800 transition-colors hover:text-[#26964B]"
+                              className="mt-4 inline-flex items-center gap-2 text-[11px] font-semibold text-neutral-800 transition-colors hover:text-[#26964B] sm:text-xs"
                             >
                               Explore live project
-                              <ExternalLink className="h-3.5 w-3.5" />
+                              <ExternalLink className="h-3 w-3" />
                             </a>
                           )}
                         </div>
@@ -847,17 +917,18 @@ const Projects: React.FC = () => {
               </div>
 
               {/* CAROUSEL CONTROLS */}
-              <div className="mt-5 flex items-center justify-between border-t border-black/[0.08] pt-5">
-                <div className="flex items-center gap-2">
+              <div className="mt-4 flex items-center justify-between border-t border-black/[0.08] pt-5">
+                <div className="flex max-w-[65%] flex-wrap items-center gap-2">
                   {visibleProjects.map((project, index) => (
                     <button
                       key={`${project.title}-dot`}
                       type="button"
                       onClick={() => scrollToSlide(index)}
                       aria-label={`Go to project ${index + 1}`}
+                      aria-current={activeSlide === index ? "true" : undefined}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
                         activeSlide === index
-                          ? "w-8 bg-[#50DC7D]"
+                          ? "w-7 bg-[#50DC7D]"
                           : "w-1.5 bg-neutral-300 hover:bg-neutral-500"
                       }`}
                     />
@@ -868,8 +939,9 @@ const Projects: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => scrollCarousel("prev")}
+                    disabled={activeSlide === 0}
                     aria-label="Previous projects"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-neutral-700 transition hover:border-[#50DC7D] hover:bg-[#50DC7D]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-neutral-700 transition hover:border-[#50DC7D] hover:bg-[#50DC7D] disabled:cursor-not-allowed disabled:opacity-35 sm:h-10 sm:w-10"
                   >
                     <ArrowLeft className="h-4 w-4" />
                   </button>
@@ -877,8 +949,9 @@ const Projects: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => scrollCarousel("next")}
+                    disabled={activeSlide >= visibleProjects.length - 1}
                     aria-label="Next projects"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-neutral-700 transition hover:border-[#50DC7D] hover:bg-[#50DC7D]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-neutral-700 transition hover:border-[#50DC7D] hover:bg-[#50DC7D] disabled:cursor-not-allowed disabled:opacity-35 sm:h-10 sm:w-10"
                   >
                     <ArrowRight className="h-4 w-4" />
                   </button>
@@ -888,13 +961,12 @@ const Projects: React.FC = () => {
           )}
 
           {/* NOTE */}
-          <div className="mt-9 flex items-start gap-3 rounded-2xl border border-black/[0.08] bg-white px-5 py-4">
+          <div className="mt-8 flex items-start gap-3 rounded-2xl border border-black/[0.08] bg-white px-4 py-4 sm:px-5">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#26964B]" />
-            <p className="text-xs leading-6 text-neutral-500 sm:text-sm">
-              Every project has its own scope and requirements. This
-              collection highlights selected work; some projects are
-              available to explore publicly, while others are presented
-              for portfolio reference.
+            <p className="text-[11px] leading-6 text-neutral-500 sm:text-sm">
+              Every project has its own scope and requirements. This collection
+              highlights selected work; some projects are available to explore
+              publicly, while others are presented for portfolio reference.
             </p>
           </div>
         </div>
@@ -919,9 +991,7 @@ const Projects: React.FC = () => {
               <h2 className="max-w-md font-display text-4xl font-bold leading-[1.04] tracking-[-0.065em] sm:text-5xl">
                 Clear thinking.
                 <br />
-                <span className="text-neutral-400">
-                  Useful outcomes.
-                </span>
+                <span className="text-neutral-400">Useful outcomes.</span>
               </h2>
 
               <p className="mt-5 max-w-md text-sm leading-7 text-neutral-500">
@@ -1036,14 +1106,14 @@ const Projects: React.FC = () => {
         </div>
       </section>
 
-      {/* PAGE-SCOPED STYLES */}
+      {/* PAGE STYLES */}
       <style>{`
         .h2c-projects {
           --project-green: #50DC7D;
         }
 
         .h2c-projects .font-display {
-          font-family: "Sora", sans-serif;, "Inter", sans-serif;
+          font-family: "Sora", "Inter", sans-serif;
         }
 
         .h2c-projects .font-mono {
@@ -1059,6 +1129,61 @@ const Projects: React.FC = () => {
 
         .h2c-projects .project-carousel::-webkit-scrollbar {
           display: none;
+        }
+
+        /* MOBILE CARD SIZING */
+        .h2c-projects .project-card {
+          width: calc(100vw - 40px);
+          max-width: 390px;
+        }
+
+        /* COMPACT IMAGE HEIGHT ON PHONES */
+        .h2c-projects .project-card-image {
+          height: 174px;
+        }
+
+        /* KEEP DESCRIPTIONS FROM STRETCHING CARDS */
+        .h2c-projects .project-description {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
+          line-clamp: 3;
+          overflow: hidden;
+        }
+
+        /* TABLET */
+        @media (min-width: 640px) {
+          .h2c-projects .project-card {
+            width: min(65vw, 430px);
+            max-width: 430px;
+          }
+
+          .h2c-projects .project-card-image {
+            height: 210px;
+          }
+
+          .h2c-projects .project-description {
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+          }
+        }
+
+        /* DESKTOP: THREE CARDS IN THE CAROUSEL */
+        @media (min-width: 1024px) {
+          .h2c-projects .project-card {
+            width: calc((100% - 40px) / 3);
+            max-width: none;
+          }
+
+          .h2c-projects .project-card-image {
+            height: 190px;
+          }
+        }
+
+        @media (min-width: 1280px) {
+          .h2c-projects .project-card-image {
+            height: 205px;
+          }
         }
 
         @keyframes project-marquee {

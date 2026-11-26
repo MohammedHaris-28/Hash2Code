@@ -800,12 +800,12 @@ const Clients: React.FC = () => {
           <div className="mt-16 grid gap-5 border-t border-neutral-300 pt-7 sm:mt-20 sm:grid-cols-3 sm:gap-8">
             <div className="flex items-center gap-4">
               <span className="display text-6xl leading-none">
-                {String(clients.length).padStart(2, "0")}
+                50+
               </span>
               <span className="text-sm leading-5 text-neutral-500">
-                Featured
+                Happy
                 <br />
-                collaborations
+                Clients
               </span>
             </div>
 
@@ -1146,8 +1146,7 @@ const Clients: React.FC = () => {
                 </div>
 
                 <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                  {String(clients.length).padStart(2, "0")} featured clients
+                 
                 </p>
               </div>
 
@@ -1246,12 +1245,12 @@ const Clients: React.FC = () => {
 
               <div className="mt-10 flex items-center gap-3 border-t border-[#101211]/20 pt-6">
                 <span className="display text-5xl">
-                  {String(clients.length).padStart(2, "0")}
+                  50+
                 </span>
                 <span className="text-sm leading-5 text-[#101211]/70">
-                  featured
+                  Happy
                   <br />
-                  collaborations
+                  Clients
                 </span>
               </div>
             </div>
